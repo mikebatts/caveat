@@ -24,10 +24,15 @@ export async function POST(request: NextRequest) {
   }
 
   switch (event.type) {
+    case 'checkout.session.completed': {
+      const session = event.data.object as Stripe.Checkout.Session;
+      console.log(`Checkout completed: ${session.id}, amount: ${session.amount_total}, analysisId: ${session.metadata?.analysisId}`);
+      break;
+    }
+
     case 'payment_intent.succeeded': {
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       console.log(`Payment succeeded: ${paymentIntent.id}, amount: ${paymentIntent.amount}`);
-      // In production, log to database for analytics
       break;
     }
 

@@ -1,16 +1,17 @@
-import { NextResponse } from 'next/server';
-import { createPaymentIntent, getLaunchPrice } from '@/lib/stripe';
+import { NextRequest, NextResponse } from 'next/server';
+import { createCheckoutSession } from '@/lib/stripe';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    const amount = await getLaunchPrice();
-    const paymentIntent = await createPaymentIntent(amount);
+    const { analysisId } = await request.json();
 
-    return NextResponse.json({
-      clientSecret: paymentIntent.client_secret,
-      amount: paymentIntent.amount,
-      currency: paymentIntent.currency,
-    });
+    if (!analysisId) {
+      return NextResponse.json({ error: 'Missing analysisId' }, { status: 400 });
+    }
+
+    const url = await createCheckoutSession(analysisId);
+
+    return NextResponse.json({ url });
   } catch (error) {
     console.error('Checkout error:', error);
     return NextResponse.json(

@@ -1,36 +1,72 @@
 import Stripe from 'stripe';
+import { ContractAnalysis } from './analyzer';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set');
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not set');
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2026-02-25.clover',
+  });
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-02-24.acacia',
+export const stripe = new Proxy({} as Stripe, {
+  get(_, prop) {
+    return (getStripe() as unknown as Record<string | symbol, unknown>)[prop];
+  },
 });
 
-export const CAVIAT_PRICE_LAUNCH = 4900; // $49 in cents
-export const CAVIAT_PRICE_STANDARD = 7900; // $79 in cents
-export const CAVIAT_LAUNCH_LIMIT = 50;
+export const CAVEAT_PRICE_LAUNCH = 4900; // $49 in cents
+export const CAVEAT_PRICE_STANDARD = 7900; // $79 in cents
 
-export async function getLaunchPrice(): Promise<number> {
-  // Check how many payments have been made
-  const paymentIntents = await stripe.paymentIntents.list({
-    limit: 1,
-  });
-  // In production, track actual count in DB
-  // For MVP, we'll use a simple file counter or just default to launch price
-  return CAVIAT_PRICE_LAUNCH;
+// In-memory analysis cache (TTL 15 minutes)
+const analysisCache = new Map<string, { data: ContractAnalysis; expiresAt: number }>();
+
+export function cacheAnalysis(analysisId: string, data: ContractAnalysis) {
+  const expiresAt = Date.now() + 15 * 60 * 1000;
+  analysisCache.set(analysisId, { data, expiresAt });
 }
 
-export async function createPaymentIntent(amount: number): Promise<Stripe.PaymentIntent> {
-  return stripe.paymentIntents.create({
-    amount,
-    currency: 'usd',
-    automatic_payment_methods: {
-      enabled: true,
-    },
+export function getCachedAnalysis(analysisId: string): ContractAnalysis | null {
+  cleanupExpired();
+  const entry = analysisCache.get(analysisId);
+  if (!entry) return null;
+  return entry.data;
+}
+
+function cleanupExpired() {
+  const now = Date.now();
+  for (const [key, entry] of analysisCache) {
+    if (now > entry.expiresAt) analysisCache.delete(key);
+  }
+}
+
+export async function createCheckoutSession(analysisId: string): Promise<string> {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
+  const session = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Caveat Contract Analysis',
+            description: 'Full AI-powered contract risk report',
+          },
+          unit_amount: CAVEAT_PRICE_LAUNCH,
+        },
+        quantity: 1,
+      },
+    ],
     metadata: {
+      analysisId,
       product: 'caveat-contract-analysis',
     },
+    success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${baseUrl}/analyze`,
   });
+
+  if (!session.url) throw new Error('Failed to create checkout session URL');
+  return session.url;
 }

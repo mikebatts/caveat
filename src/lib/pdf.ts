@@ -1,31 +1,26 @@
-import pdfParse from 'pdf-parse';
+import { PDFParse } from 'pdf-parse';
+import * as mammoth from 'mammoth';
 
 export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
   try {
-    const data = await pdfParse(buffer);
-    return data.text;
+    const parser = new PDFParse(new Uint8Array(buffer));
+    const result = await parser.getText();
+    return result.text;
   } catch (error) {
     throw new Error(`Failed to parse PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
 export async function extractTextFromDOCX(buffer: Buffer): Promise<string> {
-  // For MVP, we'll use a simple text extraction
-  // In production, use mammoth or docx library
   try {
-    // DOCX is a ZIP file containing XML - basic extraction
-    const text = buffer.toString('utf-8');
-    // Remove XML tags and get readable text
-    const cleaned = text
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    
-    if (cleaned.length < 50) {
+    const result = await mammoth.extractRawText({ buffer });
+    const text = result.value.trim();
+
+    if (text.length < 50) {
       throw new Error('Could not extract meaningful text from DOCX');
     }
-    
-    return cleaned;
+
+    return text;
   } catch (error) {
     throw new Error(`Failed to parse DOCX: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }

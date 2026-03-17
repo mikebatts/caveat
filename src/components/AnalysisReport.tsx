@@ -6,6 +6,8 @@ interface AnalysisReportProps {
 }
 
 export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps) {
+  const riskScore = 'overall_risk_score' in result ? result.overall_risk_score : result.risk_score;
+
   const riskColor = (score: number) => {
     if (score <= 3) return 'text-green-600 bg-green-50 border-green-200';
     if (score <= 6) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
@@ -33,14 +35,14 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
   return (
     <div className="space-y-6">
       {/* Risk Score */}
-      <div className={`rounded-xl border p-6 ${riskColor(result.risk_score)}`}>
+      <div className={`rounded-xl border p-6 ${riskColor(riskScore)}`}>
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium opacity-75">Overall Risk Score</p>
-            <p className="text-4xl font-bold mt-1">{result.risk_score}/10</p>
+            <p className="text-4xl font-bold mt-1">{riskScore}/10</p>
           </div>
           <div className="text-right">
-            <p className="text-lg font-semibold">{riskLabel(result.risk_score)}</p>
+            <p className="text-lg font-semibold">{riskLabel(riskScore)}</p>
             {result.preview && 'red_flag_count' in result && (
               <p className="text-sm opacity-75">{result.red_flag_count} issues found</p>
             )}

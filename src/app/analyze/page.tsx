@@ -6,17 +6,15 @@ import UploadZone from '@/components/UploadZone';
 import AnalysisReport from '@/components/AnalysisReport';
 import { ContractAnalysis, PreviewResult } from '@/lib/analyzer';
 
-type AnalysisResult = (ContractAnalysis | PreviewResult) & { preview: boolean };
+type AnalysisResult = (ContractAnalysis | PreviewResult) & { preview: boolean; analysisId?: string };
 
 export default function AnalyzePage() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isPaying, setIsPaying] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const handleFileSelect = async (file: File) => {
-    setSelectedFile(file);
     setError(null);
     setResult(null);
     setIsAnalyzing(true);
@@ -45,37 +43,25 @@ export default function AnalyzePage() {
   };
 
   const handleUnlock = async () => {
-    if (!selectedFile) return;
-    setIsPaying(true);
+    if (!result?.analysisId) return;
+    setIsRedirecting(true);
     setError(null);
 
     try {
-      // Create payment intent
-      const checkoutRes = await fetch('/api/checkout', { method: 'POST' });
-      const { clientSecret } = await checkoutRes.json();
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ analysisId: result.analysisId }),
+      });
 
-      if (!clientSecret) throw new Error('Failed to create payment');
+      const { url, error: checkoutError } = await res.json();
 
-      // In production, load Stripe.js and confirm payment
-      // For now, simulate payment confirmation
-      // TODO: Integrate @stripe/stripe-js for real payment flow
-      // const stripe = await loadStripe(publishableKey);
-      // const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, ...);
+      if (!url) throw new Error(checkoutError || 'Failed to create checkout');
 
-      // Placeholder: In production, this would be the actual Stripe confirmation
-      alert('Payment flow: In production, this opens Stripe checkout.\n\nFor MVP testing, use Stripe test mode.');
-
-      // After successful payment, re-analyze with paymentIntentId
-      // const formData = new FormData();
-      // formData.append('file', selectedFile);
-      // formData.append('paymentIntentId', paymentIntent.id);
-      // const response = await fetch('/api/analyze', { method: 'POST', body: formData });
-      // const data = await response.json();
-      // setResult(data);
+      window.location.href = url;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Payment failed');
-    } finally {
-      setIsPaying(false);
+      setIsRedirecting(false);
     }
   };
 
@@ -115,7 +101,7 @@ export default function AnalyzePage() {
           <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4 text-center">
             <p className="text-red-700">{error}</p>
             <button
-              onClick={() => { setError(null); setResult(null); setSelectedFile(null); }}
+              onClick={() => { setError(null); setResult(null); }}
               className="text-red-600 underline text-sm mt-2"
             >
               Try again
@@ -127,7 +113,7 @@ export default function AnalyzePage() {
         {result && (
           <div>
             <button
-              onClick={() => { setResult(null); setSelectedFile(null); }}
+              onClick={() => { setResult(null); }}
               className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-flex items-center gap-1"
             >
               ← Analyze another contract
@@ -135,12 +121,12 @@ export default function AnalyzePage() {
 
             <AnalysisReport result={result} onUnlock={handleUnlock} />
 
-            {isPaying && (
+            {isRedirecting && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                 <div className="bg-white rounded-xl p-8 text-center max-w-sm mx-4">
                   <div className="text-4xl mb-4">⏳</div>
-                  <p className="font-semibold text-gray-900">Processing payment...</p>
-                  <p className="text-sm text-gray-500 mt-1">This will just take a moment</p>
+                  <p className="font-semibold text-gray-900">Redirecting to checkout...</p>
+                  <p className="text-sm text-gray-500 mt-1">You&apos;ll be taken to Stripe to complete payment</p>
                 </div>
               </div>
             )}
