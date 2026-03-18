@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
     let contractText: string;
     try {
       contractText = await extractText(buffer, file.type);
-    } catch {
+    } catch (extractError) {
+      console.error('Text extraction error:', extractError);
       return NextResponse.json(
         { error: 'Could not extract text from file. Please ensure it contains readable text.' },
         { status: 400 }
@@ -39,10 +40,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Run full analysis upfront, cache it, return preview to the user
-    const [preview, fullAnalysis] = await Promise.all([
-      getContractPreview(contractText),
-      analyzeContract(contractText),
-    ]);
+    let preview, fullAnalysis;
+    try {
+      [preview, fullAnalysis] = await Promise.all([
+        getContractPreview(contractText),
+        analyzeContract(contractText),
+      ]);
+    } catch (aiError) {
+      const message = aiError instanceof Error ? aiError.message : String(aiError);
+      console.error('AI analysis error:', message);
+      return NextResponse.json(
+        { error: `Analysis failed: ${message}` },
+        { status: 500 }
+      );
+    }
 
     const analysisId = randomUUID();
     cacheAnalysis(analysisId, fullAnalysis);
@@ -53,9 +64,10 @@ export async function POST(request: NextRequest) {
       ...preview,
     });
   } catch (error) {
-    console.error('Analysis error:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Unhandled analysis error:', message);
     return NextResponse.json(
-      { error: 'Analysis failed. Please try again.' },
+      { error: `Analysis failed: ${message}` },
       { status: 500 }
     );
   }
