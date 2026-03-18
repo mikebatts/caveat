@@ -1,11 +1,12 @@
-import { PDFParse } from 'pdf-parse';
 import * as mammoth from 'mammoth';
 
 export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
   try {
-    const parser = new PDFParse(new Uint8Array(buffer));
-    const result = await parser.getText();
-    return result.text;
+    // Dynamic require to avoid pdf-parse trying to read a test file at import time
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require('pdf-parse/lib/pdf-parse.js');
+    const data = await pdfParse(buffer);
+    return data.text;
   } catch (error) {
     throw new Error(`Failed to parse PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
