@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     const analysisId = randomUUID();
-    cacheAnalysis(analysisId, fullAnalysis);
+    cacheAnalysis(analysisId, fullAnalysis, 'legal');
 
     return NextResponse.json({
       preview: true,

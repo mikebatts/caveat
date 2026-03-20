@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'No analysis linked to this session' }, { status: 404 });
     }
 
-    const analysis = getCachedAnalysis(analysisId);
-    if (!analysis) {
+    const cached = getCachedAnalysis(analysisId);
+    if (!cached) {
       return NextResponse.json(
         { error: 'Analysis expired. Please re-upload your contract for a new analysis.' },
         { status: 410 }
@@ -31,7 +31,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       preview: false,
-      ...analysis,
+      analysisType: cached.analysisType,
+      ...cached.data,
     });
   } catch (error) {
     console.error('Results error:', error);

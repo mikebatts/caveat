@@ -13,12 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Caveat — AI Contract Analyzer | Risk Report in 60 Seconds",
-  description: "Upload any contract and get an AI-powered risk report in 60 seconds. Flags bad terms, missing clauses, and overpayments. $49 launch price — cheaper than one lawyer call.",
-  keywords: ["contract analyzer", "AI contract review", "legal tech", "contract risk", "freelancer tools"],
+  title: "Caveat — AI-Powered Contract Intelligence",
+  description: "Scan smart contracts and legal agreements for vulnerabilities, bad terms, and hidden risks — in 60 seconds. AI-powered security analysis for Solidity, PDF, and DOCX.",
+  keywords: ["smart contract audit", "solidity security", "web3 security", "contract analyzer", "AI contract review", "legal tech"],
   openGraph: {
-    title: "Caveat — AI Contract Analyzer",
-    description: "Upload Any Contract → AI Risk Report in 60 Seconds",
+    title: "Caveat — AI-Powered Contract Intelligence",
+    description: "Scan smart contracts and legal agreements for vulnerabilities and hidden risks in 60 seconds.",
     type: "website",
   },
 };
@@ -32,6 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ background: 'var(--background)' }}
       >
         {children}
       </body>

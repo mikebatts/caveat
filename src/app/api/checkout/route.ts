@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createCheckoutSession } from '@/lib/stripe';
+import { createCheckoutSession, AnalysisType } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   try {
-    const { analysisId } = await request.json();
+    const { analysisId, analysisType } = await request.json() as {
+      analysisId?: string;
+      analysisType?: AnalysisType;
+    };
 
     if (!analysisId) {
       return NextResponse.json({ error: 'Missing analysisId' }, { status: 400 });
     }
 
-    const url = await createCheckoutSession(analysisId);
+    const url = await createCheckoutSession(analysisId, analysisType || 'legal');
 
     return NextResponse.json({ url });
   } catch (error) {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { FileUp, Download } from '@/components/Icons';
 
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
@@ -46,11 +47,14 @@ export default function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProp
         relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer
         transition-all duration-200
         ${isDragging
-          ? 'border-amber-500 bg-amber-50 scale-[1.02]'
-          : 'border-gray-300 hover:border-amber-400 hover:bg-gray-50'
+          ? 'border-cyan-500 scale-[1.02]'
+          : 'border-zinc-700 hover:border-cyan-500/50'
         }
         ${isAnalyzing ? 'opacity-50 pointer-events-none' : ''}
       `}
+      style={{
+        background: isDragging ? 'rgba(6, 182, 212, 0.1)' : 'transparent',
+      }}
     >
       <input
         type="file"
@@ -61,19 +65,25 @@ export default function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProp
       />
 
       <div className="space-y-4">
-        <div className="text-5xl">
-          {isAnalyzing ? '⏳' : isDragging ? '📥' : '📄'}
+        <div className="flex justify-center">
+          {isAnalyzing ? (
+            <div className="spinner spinner-lg" />
+          ) : isDragging ? (
+            <Download className="w-12 h-12 text-cyan-400" />
+          ) : (
+            <FileUp className="w-12 h-12 text-zinc-400" />
+          )}
         </div>
 
         <div>
-          <p className="text-lg font-semibold text-gray-900">
+          <p className="text-lg font-semibold text-zinc-100">
             {isAnalyzing
               ? 'Analyzing your contract...'
               : isDragging
               ? 'Drop your contract here'
               : 'Upload your contract'}
           </p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-zinc-400 mt-1">
             {isAnalyzing
               ? 'This usually takes 30-60 seconds'
               : 'Drag & drop or click to select. PDF, DOCX, or TXT.'}
@@ -81,7 +91,7 @@ export default function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProp
         </div>
 
         {!isAnalyzing && (
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-zinc-500">
             Max 10MB · Your contract is never stored
           </p>
         )}

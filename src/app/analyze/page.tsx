@@ -2,21 +2,36 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Code, FileText, AlertTriangle } from '@/components/Icons';
 import UploadZone from '@/components/UploadZone';
 import AnalysisReport from '@/components/AnalysisReport';
+import SmartContractInput from '@/components/SmartContractInput';
+import SmartContractReport from '@/components/SmartContractReport';
 import { ContractAnalysis, PreviewResult } from '@/lib/analyzer';
+import { SmartContractAnalysis, SmartContractPreviewResult } from '@/lib/solidity-analyzer';
 
-type AnalysisResult = (ContractAnalysis | PreviewResult) & { preview: boolean; analysisId?: string };
+type AnalysisTab = 'legal' | 'smart';
+type LegalResult = (ContractAnalysis | PreviewResult) & { preview: boolean; analysisId?: string };
+type SmartResult = (SmartContractAnalysis | SmartContractPreviewResult) & { preview: boolean; analysisId?: string; analysisType?: string };
 
 export default function AnalyzePage() {
-  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [activeTab, setActiveTab] = useState<AnalysisTab>('smart');
+  const [legalResult, setLegalResult] = useState<LegalResult | null>(null);
+  const [smartResult, setSmartResult] = useState<SmartResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
 
+  const result = activeTab === 'legal' ? legalResult : smartResult;
+
+  const handleTabSwitch = (tab: AnalysisTab) => {
+    setActiveTab(tab);
+    setError(null);
+  };
+
   const handleFileSelect = async (file: File) => {
     setError(null);
-    setResult(null);
+    setLegalResult(null);
     setIsAnalyzing(true);
 
     try {
@@ -34,7 +49,7 @@ export default function AnalyzePage() {
         throw new Error(data.error || 'Analysis failed');
       }
 
-      setResult(data);
+      setLegalResult(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
@@ -42,8 +57,14 @@ export default function AnalyzePage() {
     }
   };
 
+  const handleSmartAnalyze = (data: Record<string, unknown>) => {
+    setSmartResult(data as unknown as SmartResult);
+    setIsAnalyzing(false);
+  };
+
   const handleUnlock = async () => {
-    if (!result?.analysisId) return;
+    const currentResult = activeTab === 'legal' ? legalResult : smartResult;
+    if (!currentResult?.analysisId) return;
     setIsRedirecting(true);
     setError(null);
 
@@ -51,7 +72,10 @@ export default function AnalyzePage() {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ analysisId: result.analysisId }),
+        body: JSON.stringify({
+          analysisId: currentResult.analysisId,
+          analysisType: activeTab,
+        }),
       });
 
       const { url, error: checkoutError } = await res.json();
@@ -65,16 +89,24 @@ export default function AnalyzePage() {
     }
   };
 
+  const handleReset = () => {
+    if (activeTab === 'legal') {
+      setLegalResult(null);
+    } else {
+      setSmartResult(null);
+    }
+    setError(null);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="min-h-screen" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Header */}
-      <header className="border-b border-gray-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b sticky top-0 z-50" style={{ borderColor: 'var(--border)', background: 'rgba(10, 10, 15, 0.8)', backdropFilter: 'blur(12px)' }}>
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl">🏛️</span>
-            <span className="font-bold text-xl text-gray-900">Caveat</span>
+          <Link href="/" className="font-mono font-bold text-xl tracking-wider text-white">
+            CAVEAT
           </Link>
-          <span className="text-sm text-gray-500">AI Contract Analyzer</span>
+          <span className="text-sm text-zinc-500">AI Contract Intelligence</span>
         </div>
       </header>
 
@@ -82,27 +114,65 @@ export default function AnalyzePage() {
       <main className="max-w-3xl mx-auto px-6 py-12">
         {!result && (
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-white mb-2">
               Analyze Your Contract
             </h1>
-            <p className="text-gray-600">
-              Upload a PDF or DOCX to get an instant AI risk report
+            <p className="text-zinc-400">
+              {activeTab === 'legal'
+                ? 'Upload a PDF or DOCX to get an instant AI risk report'
+                : 'Upload Solidity code for an instant AI security report'}
             </p>
           </div>
         )}
 
-        {/* Upload Zone */}
+        {/* Tabs */}
         {!result && (
+          <div className="flex gap-1 rounded-xl p-1 mb-8 max-w-md mx-auto" style={{ background: 'var(--surface)' }}>
+            <button
+              onClick={() => handleTabSwitch('smart')}
+              disabled={isAnalyzing}
+              className={`flex-1 text-sm font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                activeTab === 'smart'
+                  ? 'bg-cyan-500/10 text-cyan-400'
+                  : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              <Code className="w-4 h-4" /> Smart Contract
+            </button>
+            <button
+              onClick={() => handleTabSwitch('legal')}
+              disabled={isAnalyzing}
+              className={`flex-1 text-sm font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                activeTab === 'legal'
+                  ? 'bg-cyan-500/10 text-cyan-400'
+                  : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              <FileText className="w-4 h-4" /> Legal Contract
+            </button>
+          </div>
+        )}
+
+        {/* Legal Tab Input */}
+        {activeTab === 'legal' && !legalResult && (
           <UploadZone onFileSelect={handleFileSelect} isAnalyzing={isAnalyzing} />
+        )}
+
+        {/* Smart Contract Tab Input */}
+        {activeTab === 'smart' && !smartResult && (
+          <SmartContractInput
+            onAnalyze={handleSmartAnalyze}
+            isAnalyzing={isAnalyzing}
+          />
         )}
 
         {/* Error */}
         {error && (
-          <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4 text-center">
-            <p className="text-red-700">{error}</p>
+          <div className="mt-6 rounded-xl p-4 text-center" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+            <p className="text-red-400 flex items-center justify-center gap-2"><AlertTriangle className="w-4 h-4" /> {error}</p>
             <button
-              onClick={() => { setError(null); setResult(null); }}
-              className="text-red-600 underline text-sm mt-2"
+              onClick={handleReset}
+              className="text-red-400 underline text-sm mt-2"
             >
               Try again
             </button>
@@ -113,20 +183,26 @@ export default function AnalyzePage() {
         {result && (
           <div>
             <button
-              onClick={() => { setResult(null); }}
-              className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-flex items-center gap-1"
+              onClick={handleReset}
+              className="text-sm text-zinc-500 hover:text-zinc-300 mb-4 inline-flex items-center gap-1"
             >
               ← Analyze another contract
             </button>
 
-            <AnalysisReport result={result} onUnlock={handleUnlock} />
+            {activeTab === 'legal' && legalResult && (
+              <AnalysisReport result={legalResult} onUnlock={handleUnlock} />
+            )}
+
+            {activeTab === 'smart' && smartResult && (
+              <SmartContractReport result={smartResult} onUnlock={handleUnlock} />
+            )}
 
             {isRedirecting && (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-xl p-8 text-center max-w-sm mx-4">
-                  <div className="text-4xl mb-4">⏳</div>
-                  <p className="font-semibold text-gray-900">Redirecting to checkout...</p>
-                  <p className="text-sm text-gray-500 mt-1">You&apos;ll be taken to Stripe to complete payment</p>
+              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+                <div className="rounded-xl p-8 text-center max-w-sm mx-4" style={{ background: 'var(--surface-raised)' }}>
+                  <div className="spinner spinner-lg mx-auto mb-4" />
+                  <p className="font-semibold text-white">Redirecting to checkout...</p>
+                  <p className="text-sm text-zinc-400 mt-1">You&apos;ll be taken to Stripe to complete payment</p>
                 </div>
               </div>
             )}
@@ -135,9 +211,9 @@ export default function AnalyzePage() {
       </main>
 
       {/* Disclaimer */}
-      <footer className="border-t border-gray-100 py-6 mt-12">
-        <div className="max-w-2xl mx-auto px-6 text-center text-xs text-gray-400">
-          <p>⚠️ AI-generated analysis only. Not legal advice. Consult a licensed attorney.</p>
+      <footer className="border-t py-6 mt-12" style={{ borderColor: 'var(--border)' }}>
+        <div className="max-w-2xl mx-auto px-6 text-center text-xs text-zinc-500 flex items-center justify-center gap-1">
+          <AlertTriangle className="w-3 h-3" /> AI-generated analysis only. Not legal advice. Not a security audit. Consult appropriate professionals.
         </div>
       </footer>
     </div>

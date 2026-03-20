@@ -1,0 +1,7 @@
+services:
+  slither:
+    build: ./slither-service
+    ports:
+      - "8000:8000"
+    environment:
+      - SLITHER_API_KEY=${SLITHER_API_KEY}

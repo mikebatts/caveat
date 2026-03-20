@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { ContractAnalysis } from './analyzer';
+import { SmartContractAnalysis } from './solidity-analyzer';
 
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -19,19 +20,30 @@ export const stripe = new Proxy({} as Stripe, {
 export const CAVEAT_PRICE_LAUNCH = 4900; // $49 in cents
 export const CAVEAT_PRICE_STANDARD = 7900; // $79 in cents
 
-// In-memory analysis cache (TTL 15 minutes)
-const analysisCache = new Map<string, { data: ContractAnalysis; expiresAt: number }>();
+export type AnalysisType = 'legal' | 'smart';
 
-export function cacheAnalysis(analysisId: string, data: ContractAnalysis) {
+// In-memory analysis cache (TTL 15 minutes)
+const analysisCache = new Map<
+  string,
+  { data: ContractAnalysis | SmartContractAnalysis; analysisType: AnalysisType; expiresAt: number }
+>();
+
+export function cacheAnalysis(
+  analysisId: string,
+  data: ContractAnalysis | SmartContractAnalysis,
+  analysisType: AnalysisType = 'legal'
+) {
   const expiresAt = Date.now() + 15 * 60 * 1000;
-  analysisCache.set(analysisId, { data, expiresAt });
+  analysisCache.set(analysisId, { data, expiresAt, analysisType });
 }
 
-export function getCachedAnalysis(analysisId: string): ContractAnalysis | null {
+export function getCachedAnalysis(
+  analysisId: string
+): { data: ContractAnalysis | SmartContractAnalysis; analysisType: AnalysisType } | null {
   cleanupExpired();
   const entry = analysisCache.get(analysisId);
   if (!entry) return null;
-  return entry.data;
+  return { data: entry.data, analysisType: entry.analysisType };
 }
 
 function cleanupExpired() {
@@ -41,18 +53,29 @@ function cleanupExpired() {
   }
 }
 
-export async function createCheckoutSession(analysisId: string): Promise<string> {
+export async function createCheckoutSession(
+  analysisId: string,
+  analysisType: AnalysisType = 'legal'
+): Promise<string> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
+  const productName =
+    analysisType === 'smart' ? 'Caveat Smart Contract Analysis' : 'Caveat Contract Analysis';
+  const productDesc =
+    analysisType === 'smart'
+      ? 'Full AI-powered smart contract security report'
+      : 'Full AI-powered contract risk report';
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
+    allow_promotion_codes: true,
     line_items: [
       {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Caveat Contract Analysis',
-            description: 'Full AI-powered contract risk report',
+            name: productName,
+            description: productDesc,
           },
           unit_amount: CAVEAT_PRICE_LAUNCH,
         },
@@ -61,7 +84,8 @@ export async function createCheckoutSession(analysisId: string): Promise<string>
     ],
     metadata: {
       analysisId,
-      product: 'caveat-contract-analysis',
+      analysisType,
+      product: analysisType === 'smart' ? 'caveat-smart-contract-analysis' : 'caveat-contract-analysis',
     },
     success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/analyze`,
