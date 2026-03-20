@@ -20,6 +20,12 @@ export const metadata: Metadata = {
     title: "Caveat — AI-Powered Contract Intelligence",
     description: "Scan smart contracts and legal agreements for vulnerabilities and hidden risks in 60 seconds.",
     type: "website",
+    siteName: "Caveat",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Caveat — AI-Powered Contract Intelligence",
+    description: "Scan smart contracts and legal agreements for vulnerabilities and hidden risks in 60 seconds.",
   },
 };
 
