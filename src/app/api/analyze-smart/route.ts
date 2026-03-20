@@ -84,10 +84,14 @@ export async function POST(request: NextRequest) {
     const analysisId = randomUUID();
     cacheAnalysis(analysisId, fullAnalysis, 'smart');
 
+    // Encode full analysis for client-side persistence (survives Stripe redirect)
+    const _fullData = Buffer.from(JSON.stringify(fullAnalysis)).toString('base64');
+
     return NextResponse.json({
       preview: true,
       analysisId,
       analysisType: 'smart',
+      _fullData,
       ...preview,
     });
   } catch (error) {

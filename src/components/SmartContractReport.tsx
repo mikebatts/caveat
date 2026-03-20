@@ -10,10 +10,10 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
   const riskScore = 'overall_risk_score' in result ? result.overall_risk_score : result.risk_score;
 
   const riskColor = (score: number) => {
-    if (score <= 3) return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
-    if (score <= 6) return 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20';
-    if (score <= 8) return 'text-orange-400 bg-orange-500/10 border-orange-500/20';
-    return 'text-red-400 bg-red-500/10 border-red-500/20';
+    if (score <= 3) return 'risk-low';
+    if (score <= 6) return 'risk-moderate';
+    if (score <= 8) return 'risk-high';
+    return 'risk-critical';
   };
 
   const riskLabel = (score: number) => {
@@ -35,9 +35,9 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
 
   const sourceBadge = (source: string) => {
     switch (source) {
-      case 'slither': return <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400">Slither</span>;
-      case 'ai': return <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400">AI</span>;
-      case 'both': return <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">Slither + AI</span>;
+      case 'slither': return <span className="text-xs px-2 py-0.5 rounded-full bg-blue-900/50 text-blue-300 border border-blue-800">Slither</span>;
+      case 'ai': return <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-900/50 text-cyan-300 border border-cyan-800">AI</span>;
+      case 'both': return <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-900/50 text-cyan-300 border border-cyan-800">Slither + AI</span>;
       default: return null;
     }
   };
@@ -48,13 +48,13 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
       <div className={`rounded-xl border p-6 ${riskColor(riskScore)}`}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium opacity-75">Security Risk Score</p>
+            <p className="text-sm font-medium">Security Risk Score</p>
             <p className="text-4xl font-bold mt-1">{riskScore}/10</p>
           </div>
           <div className="text-right">
             <p className="text-lg font-semibold">{riskLabel(riskScore)}</p>
             {result.preview && 'vulnerability_count' in result && (
-              <p className="text-sm opacity-75">{result.vulnerability_count} vulnerabilities found</p>
+              <p className="text-sm">{result.vulnerability_count} vulnerabilities found</p>
             )}
           </div>
         </div>
@@ -84,9 +84,9 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
           )}
 
           {/* Paywall */}
-          <div className="rounded-xl border p-8 text-center" style={{ background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1))', borderColor: 'rgba(6, 182, 212, 0.3)' }}>
+          <div className="paywall-card rounded-xl p-8 text-center">
             <p className="text-2xl font-bold text-white mb-2">Unlock Full Security Report</p>
-            <p className="text-zinc-400 mb-6">
+            <p className="text-zinc-300 mb-6">
               Get detailed vulnerability analysis, gas optimizations, access control review, missing security patterns, and actionable fixes.
             </p>
             <button
@@ -95,7 +95,7 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
             >
               Unlock for $49 (Launch Price)
             </button>
-            <p className="text-xs text-zinc-500 mt-3">
+            <p className="text-xs text-zinc-400 mt-3">
               One-time payment · 14-day money-back guarantee
             </p>
           </div>

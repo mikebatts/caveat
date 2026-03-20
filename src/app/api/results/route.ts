@@ -17,22 +17,28 @@ export async function GET(request: NextRequest) {
     }
 
     const analysisId = session.metadata?.analysisId;
+    const analysisType = session.metadata?.analysisType || 'legal';
+
     if (!analysisId) {
       return NextResponse.json({ error: 'No analysis linked to this session' }, { status: 404 });
     }
 
+    // Try in-memory cache (works if same serverless instance)
     const cached = getCachedAnalysis(analysisId);
-    if (!cached) {
-      return NextResponse.json(
-        { error: 'Analysis expired. Please re-upload your contract for a new analysis.' },
-        { status: 410 }
-      );
+    if (cached) {
+      return NextResponse.json({
+        preview: false,
+        analysisType: cached.analysisType,
+        ...cached.data,
+      });
     }
 
+    // Cache miss (different serverless instance) — tell client to use sessionStorage
     return NextResponse.json({
-      preview: false,
-      analysisType: cached.analysisType,
-      ...cached.data,
+      paymentVerified: true,
+      analysisId,
+      analysisType,
+      useClientCache: true,
     });
   } catch (error) {
     console.error('Results error:', error);

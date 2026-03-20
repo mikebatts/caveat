@@ -5,8 +5,10 @@
   --foreground: #e4e4e7;
   --surface: #111118;
   --surface-raised: #18181f;
+  --surface-elevated: #1c1c24;
   --border: #27272a;
   --accent: #06b6d4;
+  --accent-glow: rgba(6, 182, 212, 0.15);
 }
 
 @theme inline {
@@ -23,8 +25,7 @@ body {
 }
 
 .glass-card {
-  background: rgba(17, 17, 24, 0.6);
-  backdrop-filter: blur(12px);
+  background: var(--surface);
   border: 1px solid var(--border);
 }
 
@@ -37,7 +38,7 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, #06b6d4, #8b5cf6, #06b6d4);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.6), rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.6));
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -66,4 +67,33 @@ body {
   width: 48px;
   height: 48px;
   border-width: 4px;
+}
+
+.risk-low {
+  background: #0f2922;
+  border-color: #166534;
+  color: #4ade80;
+}
+
+.risk-moderate {
+  background: #1a1a0f;
+  border-color: #854d0e;
+  color: #fbbf24;
+}
+
+.risk-high {
+  background: #1a130f;
+  border-color: #9a3412;
+  color: #fb923c;
+}
+
+.risk-critical {
+  background: #1a0f0f;
+  border-color: #991b1b;
+  color: #f87171;
+}
+
+.paywall-card {
+  background: var(--surface-elevated);
+  border: 1px solid rgba(6, 182, 212, 0.3);
 }

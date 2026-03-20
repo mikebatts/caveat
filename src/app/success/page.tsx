@@ -33,7 +33,29 @@ function SuccessContent() {
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to load results');
-        setResult(data);
+
+        // If server returned full data from cache, use it directly
+        if (!data.useClientCache) {
+          setResult(data);
+          return;
+        }
+
+        // Server cache missed (serverless instance mismatch) — restore from sessionStorage
+        const analysisId = data.analysisId;
+        const stored = sessionStorage.getItem(`caveat_analysis_${analysisId}`);
+        if (!stored) {
+          throw new Error('Analysis expired. Please re-upload your contract for a new analysis.');
+        }
+
+        const { fullData, analysisType } = JSON.parse(stored);
+        const fullAnalysis = JSON.parse(atob(fullData));
+        sessionStorage.removeItem(`caveat_analysis_${analysisId}`);
+
+        setResult({
+          preview: false,
+          analysisType,
+          ...fullAnalysis,
+        });
       })
       .catch((err) => {
         setError(err instanceof Error ? err.message : 'Failed to load results');
@@ -69,10 +91,10 @@ function SuccessContent() {
 
       {result && (
         <div>
-          <div className="rounded-xl p-6 mb-8 text-center" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+          <div className="rounded-xl p-6 mb-8 text-center" style={{ background: '#0f2922', border: '1px solid #166534' }}>
             <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
             <p className="text-lg font-semibold text-emerald-400">Payment successful!</p>
-            <p className="text-sm text-emerald-400/70 mt-1">
+            <p className="text-sm text-emerald-300 mt-1">
               Here&apos;s your full {isSmart ? 'smart contract security' : 'contract'} analysis
             </p>
           </div>
@@ -106,7 +128,7 @@ export default function SuccessPage() {
           <Link href="/" className="font-mono font-bold text-xl tracking-wider text-white">
             CAVEAT
           </Link>
-          <span className="text-sm text-zinc-500">AI Contract Intelligence</span>
+          <span className="text-sm text-zinc-400">AI Contract Intelligence</span>
         </div>
       </header>
 
@@ -123,7 +145,7 @@ export default function SuccessPage() {
 
       {/* Disclaimer */}
       <footer className="border-t py-6 mt-12" style={{ borderColor: 'var(--border)' }}>
-        <div className="max-w-2xl mx-auto px-6 text-center text-xs text-zinc-500 flex items-center justify-center gap-1">
+        <div className="max-w-2xl mx-auto px-6 text-center text-xs text-zinc-400 flex items-center justify-center gap-1">
           <AlertTriangle className="w-3 h-3" /> AI-generated analysis only. Not legal advice. Not a security audit. Consult appropriate professionals.
         </div>
       </footer>

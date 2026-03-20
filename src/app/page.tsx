@@ -19,14 +19,14 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full opacity-[0.08]" style={{ background: 'radial-gradient(circle, #06b6d4, transparent 70%)' }} />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full opacity-[0.15]" style={{ background: 'radial-gradient(circle, #06b6d4, transparent 70%)' }} />
         <div className="relative">
           <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight">
             AI-Powered<br />
             <span className="text-cyan-400">Contract Intelligence</span>
           </h1>
 
-          <p className="text-xl text-zinc-400 mt-6 max-w-2xl mx-auto">
+          <p className="text-xl text-zinc-300 mt-6 max-w-2xl mx-auto">
             Scan smart contracts and legal agreements for vulnerabilities, bad terms, and hidden risks — in 60 seconds.
           </p>
 
@@ -39,13 +39,13 @@ export default function Home() {
             </Link>
             <a
               href="#how-it-works"
-              className="text-zinc-400 hover:text-white font-medium transition-colors flex items-center gap-1"
+              className="border border-zinc-600 hover:border-cyan-500 text-zinc-200 hover:text-white px-6 py-3.5 rounded-xl font-medium transition-colors flex items-center gap-1"
             >
               See how it works <ArrowRight className="w-4 h-4" />
             </a>
           </div>
 
-          <p className="text-sm text-zinc-500 mt-4">
+          <p className="text-sm text-zinc-400 mt-4">
             No signup required · Your files are never stored · Money-back guarantee
           </p>
         </div>
@@ -53,12 +53,12 @@ export default function Home() {
 
       {/* Trust Bar */}
       <section className="border-y py-6" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
-        <div className="max-w-4xl mx-auto px-6 flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-400">
-          <span className="flex items-center gap-2"><Lock className="w-4 h-4" /> Privacy-first (never stored)</span>
-          <span className="flex items-center gap-2"><Zap className="w-4 h-4" /> 60-second analysis</span>
-          <span className="flex items-center gap-2"><DollarSign className="w-4 h-4" /> $500 cheaper than a lawyer</span>
-          <span className="flex items-center gap-2"><FileText className="w-4 h-4" /> PDF, DOCX & .sol supported</span>
-          <span className="flex items-center gap-2"><Code className="w-4 h-4" /> Smart Contracts</span>
+        <div className="max-w-4xl mx-auto px-6 flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-300 font-medium">
+          <span className="flex items-center gap-2"><Lock className="w-4 h-4 text-cyan-400" /> Privacy-first (never stored)</span>
+          <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-cyan-400" /> 60-second analysis</span>
+          <span className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-cyan-400" /> $500 cheaper than a lawyer</span>
+          <span className="flex items-center gap-2"><FileText className="w-4 h-4 text-cyan-400" /> PDF, DOCX & .sol supported</span>
+          <span className="flex items-center gap-2"><Code className="w-4 h-4 text-cyan-400" /> Smart Contracts</span>
         </div>
       </section>
 
@@ -76,11 +76,12 @@ export default function Home() {
             { icon: Check, title: 'Take Action', desc: 'Share with lawyer or fix your code' },
           ].map((step, i) => (
             <div key={i} className="text-center">
-              <div className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: 'rgba(6, 182, 212, 0.1)' }}>
+              <div className="relative w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: 'rgba(6, 182, 212, 0.15)', border: '1px solid rgba(6, 182, 212, 0.25)' }}>
+                <span className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-cyan-500 text-black text-xs font-bold flex items-center justify-center">{i + 1}</span>
                 <step.icon className="w-6 h-6 text-cyan-400" />
               </div>
               <h3 className="font-semibold text-white mb-1">{step.title}</h3>
-              <p className="text-sm text-zinc-400">{step.desc}</p>
+              <p className="text-sm text-zinc-300">{step.desc}</p>
             </div>
           ))}
         </div>
@@ -92,7 +93,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center text-white mb-4">
             What Caveat Detects
           </h2>
-          <p className="text-center text-zinc-400 mb-12">
+          <p className="text-center text-zinc-300 mb-12">
             Smart contracts and legal agreements — one tool for both
           </p>
 
@@ -110,13 +111,13 @@ export default function Home() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">{item.title}</h3>
-                  <p className="text-sm text-zinc-400">{item.desc}</p>
+                  <p className="text-sm text-zinc-300">{item.desc}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          <h3 className="font-semibold text-emerald-400 text-lg mb-4 flex items-center gap-2"><FileText className="w-5 h-5" /> Legal Contracts</h3>
+          <h3 className="font-semibold text-cyan-400 text-lg mb-4 flex items-center gap-2"><FileText className="w-5 h-5" /> Legal Contracts</h3>
           <div className="grid md:grid-cols-2 gap-4">
             {[
               { icon: AlertTriangle, title: 'Red Flags', desc: 'One-sided liability, hidden fees, unfair penalties, auto-renewal traps' },
@@ -124,13 +125,13 @@ export default function Home() {
               { icon: Scale, title: 'Unfavorable Terms', desc: 'Non-compete overreach, broad indemnification, unilateral termination rights' },
               { icon: Lock, title: 'Compliance Notes', desc: 'Potential regulatory issues, jurisdiction conflicts, employment law risks' },
             ].map((item, i) => (
-              <div key={i} className="glass-card flex gap-4 p-5 rounded-xl border transition-colors" style={{ borderColor: 'var(--border)' }}>
+              <div key={i} className="glass-card gradient-border flex gap-4 p-5 rounded-xl transition-colors">
                 <div className="flex-shrink-0">
-                  <item.icon className="w-6 h-6 text-emerald-400" />
+                  <item.icon className="w-6 h-6 text-cyan-400" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">{item.title}</h3>
-                  <p className="text-sm text-zinc-400">{item.desc}</p>
+                  <p className="text-sm text-zinc-300">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -138,12 +139,23 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Mid-page CTA */}
+      <section className="max-w-4xl mx-auto px-6 py-16 text-center">
+        <Link
+          href="/analyze"
+          className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-4 rounded-xl transition-colors text-lg cta-glow inline-block"
+        >
+          Scan Your Contract Now
+        </Link>
+        <p className="text-sm text-zinc-400 mt-3">60-second analysis · No signup required</p>
+      </section>
+
       {/* Pricing */}
       <section className="max-w-4xl mx-auto px-6 py-20">
         <h2 className="text-3xl font-bold text-center text-white mb-4">
           Simple Pricing
         </h2>
-        <p className="text-center text-zinc-400 mb-12">
+        <p className="text-center text-zinc-300 mb-12">
           One-time payment. No subscriptions. Lifetime access.
         </p>
 
@@ -153,9 +165,9 @@ export default function Home() {
           </div>
 
           <p className="text-5xl font-bold text-white">$49</p>
-          <p className="text-zinc-400 mt-1">per analysis · lifetime access</p>
+          <p className="text-zinc-300 mt-1">per analysis · lifetime access</p>
 
-          <ul className="text-left mt-6 space-y-3 text-sm text-zinc-300">
+          <ul className="text-left mt-6 space-y-3.5 text-base text-zinc-200">
             <li className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 flex-shrink-0" /> Full risk reports with recommendations</li>
             <li className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 flex-shrink-0" /> Legal contracts (PDF & DOCX)</li>
             <li className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 flex-shrink-0" /> Smart contracts (Solidity .sol)</li>
@@ -172,14 +184,14 @@ export default function Home() {
           </Link>
         </div>
 
-        <p className="text-center text-sm text-zinc-500 mt-4">
+        <p className="text-center text-sm text-zinc-300 font-medium mt-4">
           Price increases to $79 after first 50 customers
         </p>
       </section>
 
       {/* Disclaimer */}
       <section className="border-t py-8" style={{ borderColor: 'var(--border)' }}>
-        <div className="max-w-2xl mx-auto px-6 text-center text-xs text-zinc-500">
+        <div className="max-w-2xl mx-auto px-6 text-center text-xs text-zinc-400">
           <p className="mb-2 flex items-center justify-center gap-1">
             <AlertTriangle className="w-3 h-3" /> <strong>Disclaimer:</strong> Caveat provides AI-generated informational analysis only.
             This is not legal advice or a professional security audit. AI can hallucinate or miss critical issues.
@@ -193,7 +205,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t py-6" style={{ borderColor: 'var(--border)' }}>
-        <div className="max-w-5xl mx-auto px-6 flex items-center justify-between text-sm text-zinc-500">
+        <div className="max-w-5xl mx-auto px-6 flex items-center justify-between text-sm text-zinc-400">
           <span className="font-mono font-bold tracking-wider">CAVEAT</span>
           <span>Built with AI · Powered by OpenAI</span>
         </div>

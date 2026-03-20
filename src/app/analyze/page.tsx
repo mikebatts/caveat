@@ -69,6 +69,20 @@ export default function AnalyzePage() {
     setError(null);
 
     try {
+      // Persist full analysis to sessionStorage before Stripe redirect
+      // (in-memory server cache won't survive across serverless instances)
+      const fullData = (currentResult as unknown as Record<string, unknown>)._fullData;
+      if (fullData && currentResult.analysisId) {
+        try {
+          sessionStorage.setItem(
+            `caveat_analysis_${currentResult.analysisId}`,
+            JSON.stringify({ fullData, analysisType: activeTab })
+          );
+        } catch {
+          // sessionStorage unavailable — will fall back to server cache
+        }
+      }
+
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -106,7 +120,7 @@ export default function AnalyzePage() {
           <Link href="/" className="font-mono font-bold text-xl tracking-wider text-white">
             CAVEAT
           </Link>
-          <span className="text-sm text-zinc-500">AI Contract Intelligence</span>
+          <span className="text-sm text-zinc-400">AI Contract Intelligence</span>
         </div>
       </header>
 
@@ -133,7 +147,7 @@ export default function AnalyzePage() {
               disabled={isAnalyzing}
               className={`flex-1 text-sm font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'smart'
-                  ? 'bg-cyan-500/10 text-cyan-400'
+                  ? 'bg-cyan-900/50 text-cyan-300'
                   : 'text-zinc-500 hover:text-zinc-300'
               }`}
             >
@@ -144,7 +158,7 @@ export default function AnalyzePage() {
               disabled={isAnalyzing}
               className={`flex-1 text-sm font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'legal'
-                  ? 'bg-cyan-500/10 text-cyan-400'
+                  ? 'bg-cyan-900/50 text-cyan-300'
                   : 'text-zinc-500 hover:text-zinc-300'
               }`}
             >
@@ -212,7 +226,7 @@ export default function AnalyzePage() {
 
       {/* Disclaimer */}
       <footer className="border-t py-6 mt-12" style={{ borderColor: 'var(--border)' }}>
-        <div className="max-w-2xl mx-auto px-6 text-center text-xs text-zinc-500 flex items-center justify-center gap-1">
+        <div className="max-w-2xl mx-auto px-6 text-center text-xs text-zinc-400 flex items-center justify-center gap-1">
           <AlertTriangle className="w-3 h-3" /> AI-generated analysis only. Not legal advice. Not a security audit. Consult appropriate professionals.
         </div>
       </footer>

@@ -10,10 +10,10 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
   const riskScore = 'overall_risk_score' in result ? result.overall_risk_score : result.risk_score;
 
   const riskColor = (score: number) => {
-    if (score <= 3) return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
-    if (score <= 6) return 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20';
-    if (score <= 8) return 'text-orange-400 bg-orange-500/10 border-orange-500/20';
-    return 'text-red-400 bg-red-500/10 border-red-500/20';
+    if (score <= 3) return 'risk-low';
+    if (score <= 6) return 'risk-moderate';
+    if (score <= 8) return 'risk-high';
+    return 'risk-critical';
   };
 
   const riskLabel = (score: number) => {
@@ -39,13 +39,13 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
       <div className={`rounded-xl border p-6 ${riskColor(riskScore)}`}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium opacity-75">Overall Risk Score</p>
+            <p className="text-sm font-medium">Overall Risk Score</p>
             <p className="text-4xl font-bold mt-1">{riskScore}/10</p>
           </div>
           <div className="text-right">
             <p className="text-lg font-semibold">{riskLabel(riskScore)}</p>
             {result.preview && 'red_flag_count' in result && (
-              <p className="text-sm opacity-75">{result.red_flag_count} issues found</p>
+              <p className="text-sm">{result.red_flag_count} issues found</p>
             )}
           </div>
         </div>
@@ -75,9 +75,9 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
           )}
 
           {/* Paywall */}
-          <div className="rounded-xl border p-8 text-center" style={{ background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1))', borderColor: 'rgba(6, 182, 212, 0.3)' }}>
+          <div className="paywall-card rounded-xl p-8 text-center">
             <p className="text-2xl font-bold text-white mb-2">Unlock Full Analysis</p>
-            <p className="text-zinc-400 mb-6">
+            <p className="text-zinc-300 mb-6">
               Get detailed red flags, missing clauses, unfavorable terms, compliance notes, and actionable recommendations.
             </p>
             <button
@@ -86,7 +86,7 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
             >
               Unlock for $49 (Launch Price)
             </button>
-            <p className="text-xs text-zinc-500 mt-3">
+            <p className="text-xs text-zinc-400 mt-3">
               One-time payment · Lifetime access · 14-day money-back guarantee
             </p>
           </div>
