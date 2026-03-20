@@ -145,7 +145,7 @@ export default function AnalyzePage() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Header */}
-      <header className="border-b sticky top-0 z-50" style={{ borderColor: 'var(--border)', background: 'rgba(10, 10, 15, 0.8)', backdropFilter: 'blur(12px)' }}>
+      <header className="border-b sticky top-0 z-50 liquid-glass" style={{ borderColor: 'var(--glass-border)', borderRadius: 0 }}>
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="font-mono font-bold text-xl tracking-wider text-white">
             CAVEAT
@@ -165,7 +165,7 @@ export default function AnalyzePage() {
       <main className="max-w-3xl mx-auto px-6 py-12">
         {!result && (
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">
+            <h1 className="text-3xl font-bold text-white mb-2" style={{ fontFamily: 'var(--font-serif)' }}>
               Analyze Your Contract
             </h1>
             <p className="text-zinc-400">
@@ -178,7 +178,7 @@ export default function AnalyzePage() {
 
         {/* Tabs */}
         {!result && (
-          <div className="flex gap-1 rounded-xl p-1 mb-8 max-w-md mx-auto" style={{ background: 'var(--surface)' }}>
+          <div className="flex gap-1 rounded-xl p-1 mb-8 max-w-md mx-auto liquid-glass">
             <button
               onClick={() => handleTabSwitch('smart')}
               disabled={isAnalyzing}

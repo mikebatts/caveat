@@ -108,7 +108,7 @@ function SuccessContent() {
 
       {creditsPurchased && (
         <div className="text-center py-20">
-          <div className="rounded-xl p-6 mb-8 inline-block" style={{ background: '#0f2922', border: '1px solid #166534' }}>
+          <div className="liquid-glass-elevated rounded-xl p-6 mb-8 inline-block" style={{ background: '#0f2922', border: '1px solid #166534' }}>
             <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
             <p className="text-lg font-semibold text-emerald-400">Payment successful!</p>
             <p className="text-sm text-emerald-300 mt-1">You have {creditBalance ?? 5} analysis credit{(creditBalance ?? 5) !== 1 ? 's' : ''}</p>
@@ -126,7 +126,7 @@ function SuccessContent() {
 
       {result && (
         <div>
-          <div className="rounded-xl p-6 mb-8 text-center" style={{ background: '#0f2922', border: '1px solid #166534' }}>
+          <div className="liquid-glass-elevated rounded-xl p-6 mb-8 text-center" style={{ background: '#0f2922', border: '1px solid #166534' }}>
             <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
             <p className="text-lg font-semibold text-emerald-400">Payment successful!</p>
             <p className="text-sm text-emerald-300 mt-1">
@@ -158,7 +158,7 @@ export default function SuccessPage() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Header */}
-      <header className="border-b sticky top-0 z-50" style={{ borderColor: 'var(--border)', background: 'rgba(10, 10, 15, 0.8)', backdropFilter: 'blur(12px)' }}>
+      <header className="border-b sticky top-0 z-50 liquid-glass" style={{ borderColor: 'var(--glass-border)', borderRadius: 0 }}>
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="font-mono font-bold text-xl tracking-wider text-white">
             CAVEAT

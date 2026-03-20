@@ -91,7 +91,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
   return (
     <div className="space-y-4">
       {/* Sub-tabs */}
-      <div className="flex gap-1 rounded-lg p-1" style={{ background: 'var(--surface)' }}>
+      <div className="flex gap-1 rounded-lg p-1 liquid-glass">
         {tabs.map((tab) => (
           <button
             key={tab.key}
@@ -116,15 +116,15 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
           onDragLeave={() => setIsDragging(false)}
           className={`
             relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer
-            transition-all duration-200
+            transition-all duration-300
             ${isDragging
-              ? 'border-violet-500 scale-[1.02]'
-              : 'border-zinc-700 hover:border-violet-500/50'
+              ? 'border-violet-500 scale-[1.02] liquid-glass-elevated'
+              : 'border-zinc-700 hover:border-violet-500/50 liquid-glass'
             }
             ${isAnalyzing ? 'opacity-50 pointer-events-none' : ''}
           `}
           style={{
-            background: isDragging ? 'rgba(124, 58, 237, 0.1)' : 'transparent',
+            background: isDragging ? 'rgba(124, 58, 237, 0.08)' : 'var(--glass-bg)',
           }}
         >
           <input

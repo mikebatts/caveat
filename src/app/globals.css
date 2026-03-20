@@ -10,6 +10,12 @@
   --accent: #7c3aed;
   --accent-light: #8b5cf6;
   --accent-glow: rgba(124, 58, 237, 0.15);
+
+  /* Liquid Glass tokens */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-bg-hover: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: 20px;
 }
 
 @theme inline {
@@ -17,27 +23,68 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-serif);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Liquid Glass Cards */
+.liquid-glass {
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+}
+
+.liquid-glass-elevated {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.liquid-glass-interactive {
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+.liquid-glass-interactive:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--glass-bg-hover);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.05);
+}
+
+/* Legacy aliases */
 .glass-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
 }
 
 .glass-card-hover {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  transition: border-color 0.2s, background 0.2s;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 .glass-card-hover:hover {
-  border-color: var(--accent);
-  background: rgba(124, 58, 237, 0.04);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--glass-bg-hover);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.05);
 }
 
 .accent-glow-ring {
@@ -103,6 +150,53 @@ body {
 }
 
 .paywall-card {
-  background: var(--surface-elevated);
-  border: 1px solid var(--border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Finding card severity levels */
+.finding-critical {
+  background: rgba(239, 68, 68, 0.06);
+  border-left: 4px solid #ef4444;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.finding-high {
+  background: var(--glass-bg);
+  border-left: 4px solid #f59e0b;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.finding-medium {
+  background: var(--glass-bg);
+  border-left: 4px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.finding-low {
+  background: transparent;
+  border-left: 2px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 10px 16px;
+  opacity: 0.75;
+}
+
+/* Report section navigation */
+.report-nav-item {
+  transition: color 0.2s, border-color 0.2s;
+}
+.report-nav-item.active {
+  color: #8b5cf6;
+  border-left-color: #8b5cf6;
+}
+
+/* PDF export: hide interactive elements during capture */
+.pdf-capturing [data-pdf-hidden] {
+  display: none !important;
 }
