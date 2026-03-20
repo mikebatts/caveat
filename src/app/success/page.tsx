@@ -22,6 +22,7 @@ function SuccessContent() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [creditsPurchased, setCreditsPurchased] = useState(false);
+  const [creditBalance, setCreditBalance] = useState<number | null>(null);
 
   useEffect(() => {
     if (!sessionId) {
@@ -44,6 +45,9 @@ function SuccessContent() {
         // Credit pack purchase — no analysis to show
         if (data.creditPurchase) {
           setCreditsPurchased(true);
+          if (typeof data.credits === 'number') {
+            setCreditBalance(data.credits);
+          }
           return;
         }
 
@@ -95,7 +99,7 @@ function SuccessContent() {
           <p className="text-zinc-400 mb-6">{error}</p>
           <Link
             href="/analyze"
-            className="bg-white hover:bg-zinc-200 text-black font-semibold px-6 py-3 rounded-lg transition-colors"
+            className="bg-violet-600 hover:bg-violet-500 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
           >
             Analyze Another Contract
           </Link>
@@ -107,12 +111,12 @@ function SuccessContent() {
           <div className="rounded-xl p-6 mb-8 inline-block" style={{ background: '#0f2922', border: '1px solid #166534' }}>
             <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
             <p className="text-lg font-semibold text-emerald-400">Payment successful!</p>
-            <p className="text-sm text-emerald-300 mt-1">You have 5 analysis credits</p>
+            <p className="text-sm text-emerald-300 mt-1">You have {creditBalance ?? 5} analysis credit{(creditBalance ?? 5) !== 1 ? 's' : ''}</p>
           </div>
           <div>
             <Link
               href="/analyze"
-              className="bg-white hover:bg-zinc-200 text-black font-semibold px-8 py-3 rounded-lg transition-colors inline-block"
+              className="bg-violet-600 hover:bg-violet-500 text-white font-semibold px-8 py-3 rounded-lg transition-colors inline-block"
             >
               Start Analyzing &rarr;
             </Link>
@@ -139,7 +143,7 @@ function SuccessContent() {
           <div className="mt-8 text-center">
             <Link
               href="/analyze"
-              className="text-zinc-400 hover:text-zinc-300 font-medium"
+              className="text-violet-400 hover:text-violet-300 font-medium"
             >
               &larr; Analyze another contract
             </Link>

@@ -99,7 +99,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
             disabled={isAnalyzing}
             className={`flex-1 text-sm font-medium py-2 px-3 rounded-md transition-colors ${
               mode === tab.key
-                ? 'bg-white/10 text-white'
+                ? 'bg-violet-600/20 text-violet-400'
                 : 'text-zinc-500 hover:text-zinc-300'
             }`}
           >
@@ -118,13 +118,13 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
             relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer
             transition-all duration-200
             ${isDragging
-              ? 'border-zinc-400 scale-[1.02]'
-              : 'border-zinc-700 hover:border-zinc-500'
+              ? 'border-violet-500 scale-[1.02]'
+              : 'border-zinc-700 hover:border-violet-500/50'
             }
             ${isAnalyzing ? 'opacity-50 pointer-events-none' : ''}
           `}
           style={{
-            background: isDragging ? 'rgba(255, 255, 255, 0.03)' : 'transparent',
+            background: isDragging ? 'rgba(124, 58, 237, 0.1)' : 'transparent',
           }}
         >
           <input
@@ -166,7 +166,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
       {mode === 'paste' && (
         <div className="space-y-3">
           {isAnalyzing ? (
-            <div className="border-2 border-dashed border-zinc-700 rounded-2xl p-12 text-center">
+            <div className="border-2 border-dashed border-violet-500/30 rounded-2xl p-12 text-center">
               <div className="spinner spinner-lg mx-auto mb-4" />
               <p className="text-lg font-semibold text-zinc-100">Analyzing smart contract...</p>
               <p className="text-sm text-zinc-400 mt-1">This usually takes 30-60 seconds</p>
@@ -183,7 +183,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
               <button
                 onClick={() => handleSubmit({ source_code: code })}
                 disabled={!code.trim()}
-                className="w-full bg-white hover:bg-zinc-200 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-semibold py-3 rounded-lg transition-colors"
+                className="w-full bg-violet-600 hover:bg-violet-500 disabled:bg-zinc-700 disabled:text-zinc-500 text-white font-semibold py-3 rounded-lg transition-colors"
               >
                 Analyze Smart Contract
               </button>
@@ -196,7 +196,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
       {mode === 'address' && (
         <div className="space-y-3">
           {isAnalyzing ? (
-            <div className="border-2 border-dashed border-zinc-700 rounded-2xl p-12 text-center">
+            <div className="border-2 border-dashed border-violet-500/30 rounded-2xl p-12 text-center">
               <div className="spinner spinner-lg mx-auto mb-4" />
               <p className="text-lg font-semibold text-zinc-100">Fetching & analyzing contract...</p>
               <p className="text-sm text-zinc-400 mt-1">This usually takes 30-60 seconds</p>
@@ -219,7 +219,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
               <button
                 onClick={() => handleSubmit({ contract_address: address })}
                 disabled={!address.trim()}
-                className="w-full bg-white hover:bg-zinc-200 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-semibold py-3 rounded-lg transition-colors"
+                className="w-full bg-violet-600 hover:bg-violet-500 disabled:bg-zinc-700 disabled:text-zinc-500 text-white font-semibold py-3 rounded-lg transition-colors"
               >
                 Fetch & Analyze
               </button>

@@ -47,13 +47,13 @@ export default function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProp
         relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer
         transition-all duration-200
         ${isDragging
-          ? 'border-cyan-500 scale-[1.02]'
-          : 'border-zinc-700 hover:border-cyan-500/50'
+          ? 'border-violet-500 scale-[1.02]'
+          : 'border-zinc-700 hover:border-violet-500/50'
         }
         ${isAnalyzing ? 'opacity-50 pointer-events-none' : ''}
       `}
       style={{
-        background: isDragging ? 'rgba(6, 182, 212, 0.1)' : 'transparent',
+        background: isDragging ? 'rgba(124, 58, 237, 0.1)' : 'transparent',
       }}
     >
       <input
@@ -69,7 +69,7 @@ export default function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProp
           {isAnalyzing ? (
             <div className="spinner spinner-lg" />
           ) : isDragging ? (
-            <Download className="w-12 h-12 text-cyan-400" />
+            <Download className="w-12 h-12 text-violet-400" />
           ) : (
             <FileUp className="w-12 h-12 text-zinc-400" />
           )}

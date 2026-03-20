@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe, addCredits, CREDITS_PER_PACK } from '@/lib/stripe';
+import { stripe, grantCreditsIdempotent, CREDITS_PER_PACK } from '@/lib/stripe';
 import Stripe from 'stripe';
 
 export async function POST(request: NextRequest) {
@@ -30,8 +30,8 @@ export async function POST(request: NextRequest) {
 
       if (customerId && session.metadata?.product === 'caveat-credit-pack') {
         const credits = parseInt(session.metadata?.credits || String(CREDITS_PER_PACK), 10);
-        const newBalance = await addCredits(customerId, credits);
-        console.log(`Credits granted: ${credits} to ${customerId}, new balance: ${newBalance}`);
+        const { granted, balance } = await grantCreditsIdempotent(customerId, session.id, credits);
+        console.log(`Credits ${granted ? 'granted' : 'already processed'}: ${credits} to ${customerId}, balance: ${balance}`);
       }
 
       console.log(`Checkout completed: ${session.id}, amount: ${session.amount_total}`);

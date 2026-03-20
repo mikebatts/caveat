@@ -96,14 +96,14 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
           )}
 
           {/* Paywall */}
-          <div className="paywall-card rounded-xl p-8 text-center">
+          <div className="paywall-card accent-glow-ring rounded-xl p-8 text-center">
             <p className="text-2xl font-bold text-white mb-2">Unlock Full Security Report</p>
             <p className="text-zinc-300 mb-6">
               Get architecture review, known exploit matching, detailed vulnerability analysis, and priority-ranked fixes.
             </p>
             <button
               onClick={onUnlock}
-              className="bg-white hover:bg-zinc-200 text-black font-semibold px-8 py-3 rounded-lg transition-colors"
+              className="bg-violet-600 hover:bg-violet-500 text-white font-semibold px-8 py-3 rounded-lg transition-colors shadow-lg shadow-violet-600/25"
             >
               Get 5 Credits &mdash; $49
             </button>
@@ -199,7 +199,7 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
                     {vuln.location && (
                       <p className="text-zinc-500 text-xs font-mono mb-1">Location: {vuln.location}</p>
                     )}
-                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-zinc-400" /> {vuln.recommendation}</p>
+                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" /> {vuln.recommendation}</p>
                   </div>
                 ))}
               </div>
@@ -217,7 +217,7 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
                     {issue.location && (
                       <p className="text-zinc-500 text-xs font-mono">{issue.location}</p>
                     )}
-                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-zinc-400" /> {issue.suggestion}</p>
+                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" /> {issue.suggestion}</p>
                   </div>
                 ))}
               </div>
@@ -235,7 +235,7 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
                       {severityDot(item.severity)}
                       <span className="font-medium text-white">{item.issue}</span>
                     </div>
-                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-zinc-400" /> {item.recommendation}</p>
+                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" /> {item.recommendation}</p>
                   </div>
                 ))}
               </div>
@@ -251,7 +251,7 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
                   <div key={i} className="border-l-4 border-yellow-500/50 pl-4 py-2">
                     <p className="font-medium text-white">{item.pattern}</p>
                     <p className="text-zinc-300 text-sm">{item.importance}</p>
-                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-zinc-400" /> {item.recommendation}</p>
+                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" /> {item.recommendation}</p>
                   </div>
                 ))}
               </div>

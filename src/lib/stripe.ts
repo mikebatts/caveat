@@ -120,3 +120,37 @@ export async function addCredits(customerId: string, amount: number): Promise<nu
   });
   return newBalance;
 }
+
+export async function grantCreditsIdempotent(
+  customerId: string,
+  sessionId: string,
+  amount: number
+): Promise<{ granted: boolean; balance: number }> {
+  const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer;
+  if (customer.deleted) return { granted: false, balance: 0 };
+
+  const processedRaw = customer.metadata?.processed_sessions || '';
+  const processedList = processedRaw ? processedRaw.split(',') : [];
+
+  // Already processed — return current balance
+  if (processedList.includes(sessionId)) {
+    const balance = parseInt(customer.metadata?.credits || '0', 10);
+    return { granted: false, balance };
+  }
+
+  // Grant credits
+  const currentCredits = parseInt(customer.metadata?.credits || '0', 10);
+  const newBalance = currentCredits + amount;
+
+  // Keep last 20 session IDs to avoid metadata bloat
+  const updatedSessions = [...processedList, sessionId].slice(-20).join(',');
+
+  await stripe.customers.update(customerId, {
+    metadata: {
+      credits: String(newBalance),
+      processed_sessions: updatedSessions,
+    },
+  });
+
+  return { granted: true, balance: newBalance };
+}

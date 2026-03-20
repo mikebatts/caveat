@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe, getCachedAnalysis } from '@/lib/stripe';
+import { stripe, getCachedAnalysis, grantCreditsIdempotent, CREDITS_PER_PACK } from '@/lib/stripe';
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,8 +18,17 @@ export async function GET(request: NextRequest) {
 
     const customerId = session.customer as string | null;
 
-    // Credit pack purchase — no analysis to show
+    // Credit pack purchase — grant credits idempotently and return balance
     if (session.metadata?.product === 'caveat-credit-pack') {
+      const credits = parseInt(session.metadata?.credits || String(CREDITS_PER_PACK), 10);
+      if (customerId) {
+        const { balance } = await grantCreditsIdempotent(customerId, session.id, credits);
+        return NextResponse.json({
+          creditPurchase: true,
+          customerId,
+          credits: balance,
+        });
+      }
       return NextResponse.json({
         creditPurchase: true,
         customerId,

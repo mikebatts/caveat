@@ -108,14 +108,14 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
           )}
 
           {/* Paywall */}
-          <div className="paywall-card rounded-xl p-8 text-center">
+          <div className="paywall-card accent-glow-ring rounded-xl p-8 text-center">
             <p className="text-2xl font-bold text-white mb-2">Unlock Full Analysis</p>
             <p className="text-zinc-300 mb-6">
               Get redline suggestions, cross-clause risks, industry benchmarks, and priority-ranked action items.
             </p>
             <button
               onClick={onUnlock}
-              className="bg-white hover:bg-zinc-200 text-black font-semibold px-8 py-3 rounded-lg transition-colors"
+              className="bg-violet-600 hover:bg-violet-500 text-white font-semibold px-8 py-3 rounded-lg transition-colors shadow-lg shadow-violet-600/25"
             >
               Get 5 Credits &mdash; $49
             </button>
@@ -220,7 +220,7 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
                       <span className="font-medium text-white">{flag.clause}</span>
                     </div>
                     <p className="text-zinc-300 text-sm mb-1">{flag.risk}</p>
-                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-zinc-400" /> {flag.recommendation}</p>
+                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" /> {flag.recommendation}</p>
                   </div>
                 ))}
               </div>
@@ -236,7 +236,7 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
                   <div key={i} className="border-l-4 border-yellow-500/50 pl-4 py-2">
                     <p className="font-medium text-white">{clause.clause}</p>
                     <p className="text-zinc-300 text-sm">{clause.importance}</p>
-                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-zinc-400" /> {clause.recommendation}</p>
+                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" /> {clause.recommendation}</p>
                   </div>
                 ))}
               </div>
@@ -252,7 +252,7 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
                   <div key={i} className="border-l-4 border-orange-500/50 pl-4 py-2">
                     <p className="font-medium text-white">{term.term}</p>
                     <p className="text-zinc-300 text-sm">{term.why_unfavorable}</p>
-                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-zinc-400" /> {term.suggestion}</p>
+                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" /> {term.suggestion}</p>
                   </div>
                 ))}
               </div>

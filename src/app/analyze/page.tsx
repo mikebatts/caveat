@@ -26,17 +26,36 @@ export default function AnalyzePage() {
 
   const result = activeTab === 'legal' ? legalResult : smartResult;
 
+  const refreshCredits = useCallback((cid: string) => {
+    fetch(`/api/credits?customer_id=${encodeURIComponent(cid)}`)
+      .then(res => res.json())
+      .then(data => setCredits(data.credits || 0))
+      .catch(() => setCredits(0));
+  }, []);
+
   // Load customer ID and fetch credits on mount
   useEffect(() => {
     const stored = localStorage.getItem('caveat_customer_id');
     if (stored) {
       setCustomerId(stored);
-      fetch(`/api/credits?customer_id=${encodeURIComponent(stored)}`)
-        .then(res => res.json())
-        .then(data => setCredits(data.credits || 0))
-        .catch(() => setCredits(0));
+      refreshCredits(stored);
     }
-  }, []);
+  }, [refreshCredits]);
+
+  // Refresh credits when tab becomes visible (covers return from Stripe checkout)
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        const stored = localStorage.getItem('caveat_customer_id');
+        if (stored) {
+          setCustomerId(stored);
+          refreshCredits(stored);
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [refreshCredits]);
 
   // Update credits when result comes back with creditsRemaining
   useEffect(() => {
@@ -133,7 +152,7 @@ export default function AnalyzePage() {
           </Link>
           <div className="flex items-center gap-4">
             {credits > 0 && (
-              <span className="text-sm text-zinc-400">
+              <span className="text-sm text-violet-400 font-medium">
                 {credits} credit{credits !== 1 ? 's' : ''} remaining
               </span>
             )}
@@ -165,8 +184,8 @@ export default function AnalyzePage() {
               disabled={isAnalyzing}
               className={`flex-1 text-sm font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'smart'
-                  ? 'bg-white/10 text-white'
-                  : 'text-zinc-500 hover:text-zinc-300'
+                  ? 'bg-violet-600/20 text-violet-400 border border-violet-500/30'
+                  : 'text-zinc-500 hover:text-zinc-300 border border-transparent'
               }`}
             >
               <Code className="w-4 h-4" /> Smart Contract
@@ -176,8 +195,8 @@ export default function AnalyzePage() {
               disabled={isAnalyzing}
               className={`flex-1 text-sm font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'legal'
-                  ? 'bg-white/10 text-white'
-                  : 'text-zinc-500 hover:text-zinc-300'
+                  ? 'bg-violet-600/20 text-violet-400 border border-violet-500/30'
+                  : 'text-zinc-500 hover:text-zinc-300 border border-transparent'
               }`}
             >
               <FileText className="w-4 h-4" /> Legal Contract
