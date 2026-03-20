@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { analyzeSmartContract, getSmartContractPreview } from '@/lib/solidity-analyzer';
 import { fetchContractSource } from '@/lib/etherscan';
 import { runSlither } from '@/lib/slither';
-import { cacheAnalysis } from '@/lib/stripe';
+import { cacheAnalysis, getCustomerCredits, decrementCredits } from '@/lib/stripe';
 import { randomUUID } from 'crypto';
 
 export const maxDuration = 60;
@@ -23,12 +23,14 @@ function validateSolidity(code: string): string | null {
 export async function POST(request: NextRequest) {
   try {
     let sourceCode: string;
+    let customerId: string | null = null;
     const contentType = request.headers.get('content-type') || '';
 
     if (contentType.includes('multipart/form-data')) {
       // File upload
       const formData = await request.formData();
       const file = formData.get('file') as File | null;
+      customerId = formData.get('customerId') as string | null;
       if (!file) {
         return NextResponse.json({ error: 'No file provided' }, { status: 400 });
       }
@@ -39,6 +41,7 @@ export async function POST(request: NextRequest) {
     } else {
       // JSON body
       const body = await request.json();
+      customerId = body.customerId || null;
 
       if (body.contract_address) {
         // Fetch from Etherscan
@@ -66,7 +69,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    // Run Slither (25s timeout for Railway cold starts) + GPT-4o preview in parallel
+    // Check if user has credits
+    let hasCredits = false;
+    if (customerId) {
+      try {
+        const credits = await getCustomerCredits(customerId);
+        hasCredits = credits > 0;
+      } catch {
+        hasCredits = false;
+      }
+    }
+
+    if (hasCredits && customerId) {
+      // Full analysis — deduct credit
+      const slitherFindings = await Promise.race([
+        runSlither(sourceCode).catch(() => null),
+        new Promise<null>((resolve) => setTimeout(() => resolve(null), 25000)),
+      ]);
+
+      const fullAnalysis = await analyzeSmartContract(sourceCode, slitherFindings);
+      const remaining = await decrementCredits(customerId);
+
+      return NextResponse.json({
+        preview: false,
+        analysisType: 'smart',
+        creditsRemaining: remaining,
+        ...fullAnalysis,
+      });
+    }
+
+    // Free preview tier
     const slitherPromise = Promise.race([
       runSlither(sourceCode).catch(() => null),
       new Promise<null>((resolve) => setTimeout(() => resolve(null), 25000)),

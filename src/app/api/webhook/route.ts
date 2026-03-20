@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { stripe, addCredits, CREDITS_PER_PACK } from '@/lib/stripe';
 import Stripe from 'stripe';
 
 export async function POST(request: NextRequest) {
@@ -26,7 +26,15 @@ export async function POST(request: NextRequest) {
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session;
-      console.log(`Checkout completed: ${session.id}, amount: ${session.amount_total}, analysisId: ${session.metadata?.analysisId}`);
+      const customerId = session.customer as string;
+
+      if (customerId && session.metadata?.product === 'caveat-credit-pack') {
+        const credits = parseInt(session.metadata?.credits || String(CREDITS_PER_PACK), 10);
+        const newBalance = await addCredits(customerId, credits);
+        console.log(`Credits granted: ${credits} to ${customerId}, new balance: ${newBalance}`);
+      }
+
+      console.log(`Checkout completed: ${session.id}, amount: ${session.amount_total}`);
       break;
     }
 

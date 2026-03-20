@@ -16,6 +16,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Payment not completed' }, { status: 402 });
     }
 
+    const customerId = session.customer as string | null;
+
+    // Credit pack purchase — no analysis to show
+    if (session.metadata?.product === 'caveat-credit-pack') {
+      return NextResponse.json({
+        creditPurchase: true,
+        customerId,
+      });
+    }
+
     const analysisId = session.metadata?.analysisId;
     const analysisType = session.metadata?.analysisType || 'legal';
 
@@ -29,6 +39,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         preview: false,
         analysisType: cached.analysisType,
+        customerId,
         ...cached.data,
       });
     }
@@ -38,6 +49,7 @@ export async function GET(request: NextRequest) {
       paymentVerified: true,
       analysisId,
       analysisType,
+      customerId,
       useClientCache: true,
     });
   } catch (error) {

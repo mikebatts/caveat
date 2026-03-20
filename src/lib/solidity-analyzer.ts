@@ -3,6 +3,13 @@ import { openai, ANALYSIS_MODEL } from './openai';
 export interface SmartContractAnalysis {
   overall_risk_score: number;
   summary: string;
+  executive_summary: Array<{ point: string; action_required: boolean }>;
+  architecture_review: {
+    pattern: string;
+    assessment: string;
+    concerns: string[];
+    strengths: string[];
+  };
   vulnerabilities: Array<{
     title: string;
     description: string;
@@ -10,6 +17,11 @@ export interface SmartContractAnalysis {
     location: string;
     recommendation: string;
     source: 'slither' | 'ai' | 'both';
+  }>;
+  known_exploit_matches: Array<{
+    exploit_name: string;
+    similarity: string;
+    affected_function: string;
   }>;
   gas_issues: Array<{
     description: string;
@@ -31,7 +43,10 @@ export interface SmartContractAnalysis {
     issue: string;
     severity: 'info' | 'warning' | 'critical';
   }>;
-  recommendations: string[];
+  recommendations: Array<{
+    action: string;
+    priority: 'do_first' | 'important' | 'nice_to_have';
+  }>;
 }
 
 export interface SmartContractPreviewResult {
@@ -53,11 +68,24 @@ const SOLIDITY_ANALYSIS_SYSTEM_PROMPT = `You are Caveat, a senior smart contract
 
 You may also receive Slither static analysis findings. Cross-reference these with your own analysis — confirm, expand, or note false positives.
 
-Analyze the provided Solidity source code and return a JSON response with this structure:
+STEP 1: Identify the overall architecture pattern (Proxy, Diamond, Singleton, Factory, etc). Assess if appropriate for the use case.
+
+STEP 2: Compare code patterns against known exploits (The DAO reentrancy, Parity wallet, bZx flash loan, Cream Finance, Wormhole bridge).
+
+STEP 3: Analyze the provided Solidity source code and return a JSON response with this structure:
 
 {
   "overall_risk_score": <1-10, where 10 is extremely risky>,
   "summary": "<2-3 sentence plain English summary of the contract and key security concerns>",
+  "executive_summary": [
+    { "point": "<actionable bullet point>", "action_required": true/false }
+  ],
+  "architecture_review": {
+    "pattern": "<detected design pattern — e.g., Proxy, Diamond, Singleton, Factory, Minimal Proxy>",
+    "assessment": "<whether pattern is appropriate for this contract's purpose>",
+    "concerns": ["<architectural concern>"],
+    "strengths": ["<architectural strength>"]
+  },
   "vulnerabilities": [
     {
       "title": "<vulnerability name>",
@@ -66,6 +94,13 @@ Analyze the provided Solidity source code and return a JSON response with this s
       "location": "<function name or line range>",
       "recommendation": "<how to fix>",
       "source": "slither|ai|both"
+    }
+  ],
+  "known_exploit_matches": [
+    {
+      "exploit_name": "<e.g., The DAO Reentrancy, Parity Wallet Hack>",
+      "similarity": "<how this contract's pattern resembles the known exploit>",
+      "affected_function": "<function name>"
     }
   ],
   "gas_issues": [
@@ -96,16 +131,23 @@ Analyze the provided Solidity source code and return a JSON response with this s
       "severity": "info|warning|critical"
     }
   ],
-  "recommendations": ["<actionable recommendation>", "..."]
+  "recommendations": [
+    { "action": "<actionable recommendation>", "priority": "do_first|important|nice_to_have" }
+  ]
 }
 
 IMPORTANT:
+- Begin with 3-5 executive summary bullet points developers can act on immediately
+- Architecture review: identify overall design pattern and assess if appropriate
+- Known exploit matching: compare against known exploits (The DAO, Parity, bZx, Cream, Wormhole) — flag any similar patterns
 - Check for: reentrancy, access control issues, integer overflow/underflow, unchecked external calls, front-running, oracle manipulation, flash loan attacks, delegatecall risks, storage collisions, tx.origin usage
 - Check for missing: ReentrancyGuard, Pausable, access control (Ownable/AccessControl), event emissions, input validation
 - Check gas: unnecessary storage reads, loop optimizations, calldata vs memory
 - If Slither findings are provided, mark confirmed issues as "both", new AI-found issues as "ai", and Slither-only issues as "slither"
+- Priority-rank recommendations: do_first = fix before deployment, important = should fix, nice_to_have = minor improvement
 - Use plain English — target audience is developers, not auditors
 - Rate risk honestly: 1-3 = low, 4-6 = moderate, 7-8 = high, 9-10 = critical
+- If no known exploit matches are found, return an empty array
 
 Respond ONLY with valid JSON. No markdown, no explanation outside the JSON.`;
 

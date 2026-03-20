@@ -18,7 +18,7 @@ export const stripe = new Proxy({} as Stripe, {
 });
 
 export const CAVEAT_PRICE_LAUNCH = 4900; // $49 in cents
-export const CAVEAT_PRICE_STANDARD = 7900; // $79 in cents
+export const CREDITS_PER_PACK = 5;
 
 export type AnalysisType = 'legal' | 'smart';
 
@@ -53,29 +53,31 @@ function cleanupExpired() {
   }
 }
 
-export async function createCheckoutSession(
-  analysisId: string,
-  analysisType: AnalysisType = 'legal'
-): Promise<string> {
+export async function createCreditPackCheckout(customerId?: string): Promise<{ url: string; customerId: string }> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
-  const productName =
-    analysisType === 'smart' ? 'Caveat Smart Contract Analysis' : 'Caveat Contract Analysis';
-  const productDesc =
-    analysisType === 'smart'
-      ? 'Full AI-powered smart contract security report'
-      : 'Full AI-powered contract risk report';
+  // Create or reuse Stripe customer
+  let customer: Stripe.Customer;
+  if (customerId) {
+    customer = await stripe.customers.retrieve(customerId) as Stripe.Customer;
+    if (customer.deleted) {
+      customer = await stripe.customers.create({ metadata: { credits: '0' } });
+    }
+  } else {
+    customer = await stripe.customers.create({ metadata: { credits: '0' } });
+  }
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
+    customer: customer.id,
     allow_promotion_codes: true,
     line_items: [
       {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: productName,
-            description: productDesc,
+            name: 'Caveat Analysis Credits',
+            description: `${CREDITS_PER_PACK} full AI contract analysis credits`,
           },
           unit_amount: CAVEAT_PRICE_LAUNCH,
         },
@@ -83,14 +85,38 @@ export async function createCheckoutSession(
       },
     ],
     metadata: {
-      analysisId,
-      analysisType,
-      product: analysisType === 'smart' ? 'caveat-smart-contract-analysis' : 'caveat-contract-analysis',
+      product: 'caveat-credit-pack',
+      credits: String(CREDITS_PER_PACK),
     },
     success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/analyze`,
   });
 
   if (!session.url) throw new Error('Failed to create checkout session URL');
-  return session.url;
+  return { url: session.url, customerId: customer.id };
+}
+
+export async function getCustomerCredits(customerId: string): Promise<number> {
+  const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer;
+  if (customer.deleted) return 0;
+  return parseInt(customer.metadata?.credits || '0', 10);
+}
+
+export async function decrementCredits(customerId: string): Promise<number> {
+  const current = await getCustomerCredits(customerId);
+  if (current <= 0) throw new Error('No credits remaining');
+  const newBalance = current - 1;
+  await stripe.customers.update(customerId, {
+    metadata: { credits: String(newBalance) },
+  });
+  return newBalance;
+}
+
+export async function addCredits(customerId: string, amount: number): Promise<number> {
+  const current = await getCustomerCredits(customerId);
+  const newBalance = current + amount;
+  await stripe.customers.update(customerId, {
+    metadata: { credits: String(newBalance) },
+  });
+  return newBalance;
 }

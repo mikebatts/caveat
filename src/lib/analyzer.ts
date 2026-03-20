@@ -2,7 +2,9 @@ import { openai, ANALYSIS_MODEL } from './openai';
 
 export interface ContractAnalysis {
   overall_risk_score: number; // 1-10, 10 = highest risk
+  contract_type: string;
   summary: string;
+  executive_summary: Array<{ point: string; action_required: boolean }>;
   red_flags: Array<{
     clause: string;
     risk: string;
@@ -19,11 +21,31 @@ export interface ContractAnalysis {
     why_unfavorable: string;
     suggestion: string;
   }>;
+  cross_clause_risks: Array<{
+    clauses_involved: string[];
+    risk: string;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+  }>;
+  redline_suggestions: Array<{
+    original_text: string;
+    suggested_text: string;
+    reasoning: string;
+    leverage: 'high' | 'medium' | 'low';
+  }>;
+  industry_benchmarks: Array<{
+    term: string;
+    your_contract: string;
+    market_standard: string;
+    assessment: 'standard' | 'below_standard' | 'above_standard';
+  }>;
   compliance_notes: Array<{
     issue: string;
     severity: 'info' | 'warning' | 'critical';
   }>;
-  recommendations: string[];
+  recommendations: Array<{
+    action: string;
+    priority: 'do_first' | 'important' | 'nice_to_have';
+  }>;
 }
 
 export interface PreviewResult {
@@ -35,11 +57,17 @@ export interface PreviewResult {
 
 const ANALYSIS_SYSTEM_PROMPT = `You are Caveat, an AI contract analyzer. You help freelancers, small business owners, and founders understand the risks in their contracts.
 
-Analyze the provided contract and return a JSON response with the following structure:
+STEP 1: Detect the contract type (e.g., "Freelancer Service Agreement", "SaaS Terms of Service", "NDA", "Employment Agreement", "Licensing Agreement").
+
+STEP 2: Analyze the contract and return a JSON response with this structure:
 
 {
   "overall_risk_score": <1-10, where 10 is extremely risky>,
+  "contract_type": "<detected contract type>",
   "summary": "<2-3 sentence plain English summary of the contract and key concerns>",
+  "executive_summary": [
+    { "point": "<actionable bullet point a non-lawyer can act on immediately>", "action_required": true/false }
+  ],
   "red_flags": [
     {
       "clause": "<exact clause or section reference>",
@@ -62,20 +90,50 @@ Analyze the provided contract and return a JSON response with the following stru
       "suggestion": "<how to negotiate>"
     }
   ],
+  "cross_clause_risks": [
+    {
+      "clauses_involved": ["<clause 1>", "<clause 2>"],
+      "risk": "<how these clauses interact to create risk — e.g., net-90 payment + 30-day termination = unpaid work risk>",
+      "severity": "low|medium|high|critical"
+    }
+  ],
+  "redline_suggestions": [
+    {
+      "original_text": "<exact problematic language from the contract>",
+      "suggested_text": "<specific replacement language you'd propose>",
+      "reasoning": "<why this change matters>",
+      "leverage": "high|medium|low"
+    }
+  ],
+  "industry_benchmarks": [
+    {
+      "term": "<key term being compared>",
+      "your_contract": "<what this contract says>",
+      "market_standard": "<what's typical for this contract type>",
+      "assessment": "standard|below_standard|above_standard"
+    }
+  ],
   "compliance_notes": [
     {
       "issue": "<potential regulatory issue>",
       "severity": "info|warning|critical"
     }
   ],
-  "recommendations": ["<actionable recommendation>", "..."]
+  "recommendations": [
+    { "action": "<actionable recommendation>", "priority": "do_first|important|nice_to_have" }
+  ]
 }
 
 IMPORTANT:
+- Begin with 3-5 executive summary bullet points a non-lawyer can act on immediately
 - Be specific about clause references
 - Use plain English, not legal jargon
 - Flag payment terms, liability, IP ownership, termination, non-compete, indemnification
 - Check for missing standard protections (limitation of liability, force majeure, dispute resolution)
+- Cross-clause correlation: examine how clauses interact — e.g., net-90 payment + 30-day termination = unpaid work risk
+- Redline suggestions: for each unfavorable term, provide specific alternative language. Rate negotiation leverage (high = they'll likely accept, medium = worth asking, low = long shot)
+- Industry benchmarks: compare key terms against market standards for this contract type
+- Priority-rank recommendations: do_first = act before signing, important = negotiate if possible, nice_to_have = minor improvement
 - Rate risk honestly: 1-3 = low, 4-6 = moderate, 7-8 = high, 9-10 = critical
 - If the contract is ambiguous, note it as a risk
 - Consider both parties' interests, but prioritize the person uploading (likely the weaker party)

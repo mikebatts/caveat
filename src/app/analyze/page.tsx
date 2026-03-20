@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Code, FileText, AlertTriangle } from '@/components/Icons';
 import UploadZone from '@/components/UploadZone';
@@ -11,8 +11,8 @@ import { ContractAnalysis, PreviewResult } from '@/lib/analyzer';
 import { SmartContractAnalysis, SmartContractPreviewResult } from '@/lib/solidity-analyzer';
 
 type AnalysisTab = 'legal' | 'smart';
-type LegalResult = (ContractAnalysis | PreviewResult) & { preview: boolean; analysisId?: string };
-type SmartResult = (SmartContractAnalysis | SmartContractPreviewResult) & { preview: boolean; analysisId?: string; analysisType?: string };
+type LegalResult = (ContractAnalysis | PreviewResult) & { preview: boolean; analysisId?: string; creditsRemaining?: number };
+type SmartResult = (SmartContractAnalysis | SmartContractPreviewResult) & { preview: boolean; analysisId?: string; analysisType?: string; creditsRemaining?: number };
 
 export default function AnalyzePage() {
   const [activeTab, setActiveTab] = useState<AnalysisTab>('smart');
@@ -21,15 +21,37 @@ export default function AnalyzePage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [customerId, setCustomerId] = useState<string | null>(null);
+  const [credits, setCredits] = useState<number>(0);
 
   const result = activeTab === 'legal' ? legalResult : smartResult;
+
+  // Load customer ID and fetch credits on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('caveat_customer_id');
+    if (stored) {
+      setCustomerId(stored);
+      fetch(`/api/credits?customer_id=${encodeURIComponent(stored)}`)
+        .then(res => res.json())
+        .then(data => setCredits(data.credits || 0))
+        .catch(() => setCredits(0));
+    }
+  }, []);
+
+  // Update credits when result comes back with creditsRemaining
+  useEffect(() => {
+    const r = activeTab === 'legal' ? legalResult : smartResult;
+    if (r && 'creditsRemaining' in r && typeof r.creditsRemaining === 'number') {
+      setCredits(r.creditsRemaining);
+    }
+  }, [legalResult, smartResult, activeTab]);
 
   const handleTabSwitch = (tab: AnalysisTab) => {
     setActiveTab(tab);
     setError(null);
   };
 
-  const handleFileSelect = async (file: File) => {
+  const handleFileSelect = useCallback(async (file: File) => {
     setError(null);
     setLegalResult(null);
     setIsAnalyzing(true);
@@ -37,6 +59,9 @@ export default function AnalyzePage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      if (customerId) {
+        formData.append('customerId', customerId);
+      }
 
       const response = await fetch('/api/analyze', {
         method: 'POST',
@@ -55,7 +80,7 @@ export default function AnalyzePage() {
     } finally {
       setIsAnalyzing(false);
     }
-  };
+  }, [customerId]);
 
   const handleSmartAnalyze = (data: Record<string, unknown>) => {
     setSmartResult(data as unknown as SmartResult);
@@ -63,38 +88,24 @@ export default function AnalyzePage() {
   };
 
   const handleUnlock = async () => {
-    const currentResult = activeTab === 'legal' ? legalResult : smartResult;
-    if (!currentResult?.analysisId) return;
     setIsRedirecting(true);
     setError(null);
 
     try {
-      // Persist full analysis to sessionStorage before Stripe redirect
-      // (in-memory server cache won't survive across serverless instances)
-      const fullData = (currentResult as unknown as Record<string, unknown>)._fullData;
-      if (fullData && currentResult.analysisId) {
-        try {
-          sessionStorage.setItem(
-            `caveat_analysis_${currentResult.analysisId}`,
-            JSON.stringify({ fullData, analysisType: activeTab })
-          );
-        } catch {
-          // sessionStorage unavailable — will fall back to server cache
-        }
-      }
-
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          analysisId: currentResult.analysisId,
-          analysisType: activeTab,
-        }),
+        body: JSON.stringify({ customerId }),
       });
 
-      const { url, error: checkoutError } = await res.json();
+      const { url, customerId: newCustomerId, error: checkoutError } = await res.json();
 
       if (!url) throw new Error(checkoutError || 'Failed to create checkout');
+
+      // Save customer ID before redirect
+      if (newCustomerId) {
+        localStorage.setItem('caveat_customer_id', newCustomerId);
+      }
 
       window.location.href = url;
     } catch (err) {
@@ -120,7 +131,14 @@ export default function AnalyzePage() {
           <Link href="/" className="font-mono font-bold text-xl tracking-wider text-white">
             CAVEAT
           </Link>
-          <span className="text-sm text-zinc-400">AI Contract Intelligence</span>
+          <div className="flex items-center gap-4">
+            {credits > 0 && (
+              <span className="text-sm text-zinc-400">
+                {credits} credit{credits !== 1 ? 's' : ''} remaining
+              </span>
+            )}
+            <span className="text-sm text-zinc-400">AI Contract Intelligence</span>
+          </div>
         </div>
       </header>
 
@@ -147,7 +165,7 @@ export default function AnalyzePage() {
               disabled={isAnalyzing}
               className={`flex-1 text-sm font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'smart'
-                  ? 'bg-cyan-900/50 text-cyan-300'
+                  ? 'bg-white/10 text-white'
                   : 'text-zinc-500 hover:text-zinc-300'
               }`}
             >
@@ -158,7 +176,7 @@ export default function AnalyzePage() {
               disabled={isAnalyzing}
               className={`flex-1 text-sm font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${
                 activeTab === 'legal'
-                  ? 'bg-cyan-900/50 text-cyan-300'
+                  ? 'bg-white/10 text-white'
                   : 'text-zinc-500 hover:text-zinc-300'
               }`}
             >
@@ -177,6 +195,7 @@ export default function AnalyzePage() {
           <SmartContractInput
             onAnalyze={handleSmartAnalyze}
             isAnalyzing={isAnalyzing}
+            customerId={customerId}
           />
         )}
 
@@ -200,7 +219,7 @@ export default function AnalyzePage() {
               onClick={handleReset}
               className="text-sm text-zinc-500 hover:text-zinc-300 mb-4 inline-flex items-center gap-1"
             >
-              ← Analyze another contract
+              &larr; Analyze another contract
             </button>
 
             {activeTab === 'legal' && legalResult && (

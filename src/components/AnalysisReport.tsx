@@ -33,9 +33,39 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
     return <span className={`inline-block w-2.5 h-2.5 rounded-full ${colors[severity] || 'bg-zinc-500'}`} />;
   };
 
+  const priorityBadge = (priority: string) => {
+    switch (priority) {
+      case 'do_first': return <span className="text-xs px-2 py-0.5 rounded-full bg-red-900/50 text-red-300 border border-red-800">DO FIRST</span>;
+      case 'important': return <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-900/50 text-yellow-300 border border-yellow-800">Important</span>;
+      case 'nice_to_have': return <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">Nice to have</span>;
+      default: return null;
+    }
+  };
+
+  const leverageBadge = (leverage: string) => {
+    switch (leverage) {
+      case 'high': return <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-900/50 text-emerald-300 border border-emerald-800">High leverage</span>;
+      case 'medium': return <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-900/50 text-yellow-300 border border-yellow-800">Medium leverage</span>;
+      case 'low': return <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">Low leverage</span>;
+      default: return null;
+    }
+  };
+
+  const benchmarkBadge = (assessment: string) => {
+    switch (assessment) {
+      case 'above_standard': return <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-900/50 text-emerald-300 border border-emerald-800">Above standard</span>;
+      case 'standard': return <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">Standard</span>;
+      case 'below_standard': return <span className="text-xs px-2 py-0.5 rounded-full bg-red-900/50 text-red-300 border border-red-800">Below standard</span>;
+      default: return null;
+    }
+  };
+
+  const isFullAnalysis = !result.preview && 'red_flags' in result;
+  const fullResult = isFullAnalysis ? result as ContractAnalysis : null;
+
   return (
     <div className="space-y-6">
-      {/* Risk Score */}
+      {/* Risk Score + Contract Type */}
       <div className={`rounded-xl border p-6 ${riskColor(riskScore)}`}>
         <div className="flex items-center justify-between">
           <div>
@@ -47,13 +77,16 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
             {result.preview && 'red_flag_count' in result && (
               <p className="text-sm">{result.red_flag_count} issues found</p>
             )}
+            {fullResult?.contract_type && (
+              <p className="text-sm mt-1 opacity-80">Detected: {fullResult.contract_type}</p>
+            )}
           </div>
         </div>
       </div>
 
       {/* Summary */}
       <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-        <h3 className="font-semibold text-white mb-2 flex items-center gap-2"><FileSearch className="w-4 h-4 text-cyan-400" /> Summary</h3>
+        <h3 className="font-semibold text-white mb-2 flex items-center gap-2"><FileSearch className="w-4 h-4 text-zinc-400" /> Summary</h3>
         <p className="text-zinc-300">{result.summary}</p>
       </div>
 
@@ -62,11 +95,11 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
         <>
           {'top_risks' in result && result.top_risks.length > 0 && (
             <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-              <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-cyan-400" /> Top Risks Detected</h3>
+              <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-zinc-400" /> Top Risks Detected</h3>
               <ul className="space-y-2">
                 {result.top_risks.map((risk, i) => (
                   <li key={i} className="flex items-start gap-2 text-zinc-300">
-                    <span className="text-cyan-400 mt-0.5">→</span>
+                    <span className="text-zinc-400 mt-0.5">&rarr;</span>
                     {risk}
                   </li>
                 ))}
@@ -78,37 +111,116 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
           <div className="paywall-card rounded-xl p-8 text-center">
             <p className="text-2xl font-bold text-white mb-2">Unlock Full Analysis</p>
             <p className="text-zinc-300 mb-6">
-              Get detailed red flags, missing clauses, unfavorable terms, compliance notes, and actionable recommendations.
+              Get redline suggestions, cross-clause risks, industry benchmarks, and priority-ranked action items.
             </p>
             <button
               onClick={onUnlock}
-              className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-3 rounded-lg transition-colors cta-glow"
+              className="bg-white hover:bg-zinc-200 text-black font-semibold px-8 py-3 rounded-lg transition-colors"
             >
-              Unlock for $49 (Launch Price)
+              Get 5 Credits &mdash; $49
             </button>
             <p className="text-xs text-zinc-400 mt-3">
-              One-time payment · Lifetime access · 14-day money-back guarantee
+              Just $9.80 per analysis &middot; 14-day money-back guarantee
             </p>
           </div>
         </>
       )}
 
       {/* Full Analysis */}
-      {!result.preview && 'red_flags' in result && (
+      {fullResult && (
         <>
-          {/* Red Flags */}
-          {result.red_flags.length > 0 && (
+          {/* Executive Summary */}
+          {fullResult.executive_summary && fullResult.executive_summary.length > 0 && (
             <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-              <h3 className="font-semibold text-white mb-4 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-red-400" /> Red Flags ({result.red_flags.length})</h3>
+              <h3 className="font-semibold text-white mb-3">Executive Summary</h3>
+              <ul className="space-y-2">
+                {fullResult.executive_summary.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-zinc-300">
+                    <span className={`inline-block w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${item.action_required ? 'bg-red-400' : 'bg-emerald-400'}`} />
+                    {item.point}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Cross-Clause Risks */}
+          {fullResult.cross_clause_risks && fullResult.cross_clause_risks.length > 0 && (
+            <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+              <h3 className="font-semibold text-white mb-4">Cross-Clause Risks ({fullResult.cross_clause_risks.length})</h3>
               <div className="space-y-4">
-                {result.red_flags.map((flag, i) => (
+                {fullResult.cross_clause_risks.map((item, i) => (
+                  <div key={i} className="border-l-4 border-purple-500/50 pl-4 py-2">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      {severityDot(item.severity)}
+                      <span className="text-zinc-400 text-xs font-mono">{item.clauses_involved.join(' + ')}</span>
+                    </div>
+                    <p className="text-zinc-300 text-sm">{item.risk}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Redline Suggestions */}
+          {fullResult.redline_suggestions && fullResult.redline_suggestions.length > 0 && (
+            <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+              <h3 className="font-semibold text-white mb-4">Redline Suggestions ({fullResult.redline_suggestions.length})</h3>
+              <div className="space-y-5">
+                {fullResult.redline_suggestions.map((item, i) => (
+                  <div key={i} className="border-l-4 border-blue-500/50 pl-4 py-2">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      {leverageBadge(item.leverage)}
+                    </div>
+                    <p className="text-zinc-500 text-sm line-through mb-1">{item.original_text}</p>
+                    <p className="text-emerald-300 text-sm font-medium mb-1">{item.suggested_text}</p>
+                    <p className="text-zinc-400 text-xs">{item.reasoning}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Industry Benchmarks */}
+          {fullResult.industry_benchmarks && fullResult.industry_benchmarks.length > 0 && (
+            <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+              <h3 className="font-semibold text-white mb-4">Industry Benchmarks</h3>
+              <div className="space-y-3">
+                {fullResult.industry_benchmarks.map((item, i) => (
+                  <div key={i} className="rounded-lg p-3" style={{ background: 'var(--surface-raised)' }}>
+                    <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                      <span className="font-medium text-white text-sm">{item.term}</span>
+                      {benchmarkBadge(item.assessment)}
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div>
+                        <p className="text-zinc-500 mb-0.5">Your contract</p>
+                        <p className="text-zinc-300">{item.your_contract}</p>
+                      </div>
+                      <div>
+                        <p className="text-zinc-500 mb-0.5">Market standard</p>
+                        <p className="text-zinc-300">{item.market_standard}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Red Flags */}
+          {fullResult.red_flags.length > 0 && (
+            <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+              <h3 className="font-semibold text-white mb-4 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-red-400" /> Red Flags ({fullResult.red_flags.length})</h3>
+              <div className="space-y-4">
+                {fullResult.red_flags.map((flag, i) => (
                   <div key={i} className="border-l-4 border-red-500/50 pl-4 py-2">
                     <div className="flex items-center gap-2 mb-1">
                       {severityDot(flag.severity)}
                       <span className="font-medium text-white">{flag.clause}</span>
                     </div>
                     <p className="text-zinc-300 text-sm mb-1">{flag.risk}</p>
-                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-cyan-400" /> {flag.recommendation}</p>
+                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-zinc-400" /> {flag.recommendation}</p>
                   </div>
                 ))}
               </div>
@@ -116,15 +228,15 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
           )}
 
           {/* Missing Clauses */}
-          {result.missing_clauses.length > 0 && (
+          {fullResult.missing_clauses.length > 0 && (
             <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-              <h3 className="font-semibold text-white mb-4 flex items-center gap-2"><FileSearch className="w-4 h-4 text-yellow-400" /> Missing Clauses ({result.missing_clauses.length})</h3>
+              <h3 className="font-semibold text-white mb-4 flex items-center gap-2"><FileSearch className="w-4 h-4 text-yellow-400" /> Missing Clauses ({fullResult.missing_clauses.length})</h3>
               <div className="space-y-3">
-                {result.missing_clauses.map((clause, i) => (
+                {fullResult.missing_clauses.map((clause, i) => (
                   <div key={i} className="border-l-4 border-yellow-500/50 pl-4 py-2">
                     <p className="font-medium text-white">{clause.clause}</p>
                     <p className="text-zinc-300 text-sm">{clause.importance}</p>
-                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-cyan-400" /> {clause.recommendation}</p>
+                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-zinc-400" /> {clause.recommendation}</p>
                   </div>
                 ))}
               </div>
@@ -132,15 +244,15 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
           )}
 
           {/* Unfavorable Terms */}
-          {result.unfavorable_terms.length > 0 && (
+          {fullResult.unfavorable_terms.length > 0 && (
             <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-              <h3 className="font-semibold text-white mb-4 flex items-center gap-2"><Scale className="w-4 h-4 text-orange-400" /> Unfavorable Terms ({result.unfavorable_terms.length})</h3>
+              <h3 className="font-semibold text-white mb-4 flex items-center gap-2"><Scale className="w-4 h-4 text-orange-400" /> Unfavorable Terms ({fullResult.unfavorable_terms.length})</h3>
               <div className="space-y-3">
-                {result.unfavorable_terms.map((term, i) => (
+                {fullResult.unfavorable_terms.map((term, i) => (
                   <div key={i} className="border-l-4 border-orange-500/50 pl-4 py-2">
                     <p className="font-medium text-white">{term.term}</p>
                     <p className="text-zinc-300 text-sm">{term.why_unfavorable}</p>
-                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-cyan-400" /> {term.suggestion}</p>
+                    <p className="text-zinc-400 text-sm italic flex items-start gap-1"><Lightbulb className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-zinc-400" /> {term.suggestion}</p>
                   </div>
                 ))}
               </div>
@@ -148,14 +260,14 @@ export default function AnalysisReport({ result, onUnlock }: AnalysisReportProps
           )}
 
           {/* Recommendations */}
-          {result.recommendations.length > 0 && (
-            <div className="rounded-xl border p-6" style={{ background: 'rgba(6, 182, 212, 0.05)', borderColor: 'rgba(6, 182, 212, 0.2)' }}>
-              <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><CheckCircle className="w-4 h-4 text-cyan-400" /> Recommended Actions</h3>
+          {fullResult.recommendations.length > 0 && (
+            <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+              <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><CheckCircle className="w-4 h-4 text-zinc-400" /> Recommended Actions</h3>
               <ul className="space-y-2">
-                {result.recommendations.map((rec, i) => (
+                {fullResult.recommendations.map((rec, i) => (
                   <li key={i} className="flex items-start gap-2 text-zinc-300">
-                    <span className="text-cyan-400 font-bold">{i + 1}.</span>
-                    {rec}
+                    <span className="flex-shrink-0 mt-0.5">{priorityBadge(rec.priority)}</span>
+                    {rec.action}
                   </li>
                 ))}
               </ul>

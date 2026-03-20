@@ -35,19 +35,13 @@ body {
 .gradient-border::before {
   content: '';
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent);
   border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.6), rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.6));
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
   pointer-events: none;
-}
-
-.cta-glow {
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), 0 0 60px rgba(6, 182, 212, 0.1);
 }
 
 @keyframes spin {
@@ -95,5 +89,5 @@ body {
 
 .paywall-card {
   background: var(--surface-elevated);
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  border: 1px solid var(--border);
 }

@@ -10,7 +10,7 @@ export default function Home() {
           <span className="font-mono font-bold text-xl tracking-wider text-white">CAVEAT</span>
           <Link
             href="/analyze"
-            className="bg-cyan-500 hover:bg-cyan-400 text-black font-medium px-5 py-2 rounded-lg transition-colors text-sm"
+            className="bg-white hover:bg-zinc-200 text-black font-medium px-5 py-2 rounded-lg transition-colors text-sm"
           >
             Start Scanning
           </Link>
@@ -19,34 +19,34 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full opacity-[0.15]" style={{ background: 'radial-gradient(circle, #06b6d4, transparent 70%)' }} />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full opacity-[0.05]" style={{ background: 'radial-gradient(circle, #06b6d4, transparent 70%)' }} />
         <div className="relative">
           <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight">
             AI-Powered<br />
-            <span className="text-cyan-400">Contract Intelligence</span>
+            <span className="text-white">Contract Intelligence</span>
           </h1>
 
           <p className="text-xl text-zinc-300 mt-6 max-w-2xl mx-auto">
-            Scan smart contracts and legal agreements for vulnerabilities, bad terms, and hidden risks — in 60 seconds.
+            Scan smart contracts and legal agreements for vulnerabilities, bad terms, and hidden risks &mdash; with redline suggestions and industry benchmarks.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/analyze"
-              className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-4 rounded-xl transition-colors text-lg cta-glow"
+              className="bg-white hover:bg-zinc-200 text-black font-semibold px-8 py-4 rounded-xl transition-colors text-lg"
             >
               Start Scanning
             </Link>
             <a
               href="#how-it-works"
-              className="border border-zinc-600 hover:border-cyan-500 text-zinc-200 hover:text-white px-6 py-3.5 rounded-xl font-medium transition-colors flex items-center gap-1"
+              className="border border-zinc-600 hover:border-zinc-400 text-zinc-200 hover:text-white px-6 py-3.5 rounded-xl font-medium transition-colors flex items-center gap-1"
             >
               See how it works <ArrowRight className="w-4 h-4" />
             </a>
           </div>
 
           <p className="text-sm text-zinc-400 mt-4">
-            No signup required · Your files are never stored · Money-back guarantee
+            No signup required &middot; Your files are never stored &middot; Money-back guarantee
           </p>
         </div>
       </section>
@@ -54,11 +54,11 @@ export default function Home() {
       {/* Trust Bar */}
       <section className="border-y py-6" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
         <div className="max-w-4xl mx-auto px-6 flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-300 font-medium">
-          <span className="flex items-center gap-2"><Lock className="w-4 h-4 text-cyan-400" /> Privacy-first (never stored)</span>
-          <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-cyan-400" /> 60-second analysis</span>
-          <span className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-cyan-400" /> $500 cheaper than a lawyer</span>
-          <span className="flex items-center gap-2"><FileText className="w-4 h-4 text-cyan-400" /> PDF, DOCX & .sol supported</span>
-          <span className="flex items-center gap-2"><Code className="w-4 h-4 text-cyan-400" /> Smart Contracts</span>
+          <span className="flex items-center gap-2"><Lock className="w-4 h-4 text-zinc-400" /> Privacy-first (never stored)</span>
+          <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-zinc-400" /> 60-second analysis</span>
+          <span className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-zinc-400" /> $500 cheaper than a lawyer</span>
+          <span className="flex items-center gap-2"><FileText className="w-4 h-4 text-zinc-400" /> PDF, DOCX & .sol supported</span>
+          <span className="flex items-center gap-2"><Code className="w-4 h-4 text-zinc-400" /> Smart Contracts</span>
         </div>
       </section>
 
@@ -72,13 +72,12 @@ export default function Home() {
           {[
             { icon: Upload, title: 'Upload', desc: 'Drag & drop your contract (PDF, DOCX, or .sol)' },
             { icon: Cpu, title: 'AI Scans', desc: '60 seconds scanning for risks & vulnerabilities' },
-            { icon: BarChart3, title: 'Get Report', desc: 'Clear risk score + detailed flags' },
-            { icon: Check, title: 'Take Action', desc: 'Share with lawyer or fix your code' },
+            { icon: BarChart3, title: 'Get Report', desc: 'Redline suggestions, benchmarks & risk scores' },
+            { icon: Check, title: 'Take Action', desc: 'Priority-ranked action items you can act on' },
           ].map((step, i) => (
             <div key={i} className="text-center">
-              <div className="relative w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: 'rgba(6, 182, 212, 0.15)', border: '1px solid rgba(6, 182, 212, 0.25)' }}>
-                <span className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-cyan-500 text-black text-xs font-bold flex items-center justify-center">{i + 1}</span>
-                <step.icon className="w-6 h-6 text-cyan-400" />
+              <div className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border)' }}>
+                <step.icon className="w-6 h-6 text-zinc-300" />
               </div>
               <h3 className="font-semibold text-white mb-1">{step.title}</h3>
               <p className="text-sm text-zinc-300">{step.desc}</p>
@@ -94,20 +93,20 @@ export default function Home() {
             What Caveat Detects
           </h2>
           <p className="text-center text-zinc-300 mb-12">
-            Smart contracts and legal agreements — one tool for both
+            Smart contracts and legal agreements &mdash; one tool for both
           </p>
 
-          <h3 className="font-semibold text-cyan-400 text-lg mb-4 flex items-center gap-2"><Code className="w-5 h-5" /> Smart Contracts (Solidity)</h3>
+          <h3 className="font-semibold text-zinc-200 text-lg mb-4 flex items-center gap-2"><Code className="w-5 h-5" /> Smart Contracts (Solidity)</h3>
           <div className="grid md:grid-cols-2 gap-4 mb-10">
             {[
-              { icon: ShieldAlert, title: 'Vulnerabilities', desc: 'Reentrancy, overflow, unchecked calls, front-running, oracle manipulation' },
-              { icon: Lock, title: 'Access Control', desc: 'Missing onlyOwner, unprotected functions, tx.origin usage, centralization risks' },
+              { icon: ShieldAlert, title: 'Vulnerabilities', desc: 'Reentrancy, overflow, unchecked calls, front-running, known exploit matching' },
+              { icon: Lock, title: 'Access Control', desc: 'Missing onlyOwner, unprotected functions, architecture review' },
               { icon: Flame, title: 'Gas Optimization', desc: 'Unnecessary storage reads, loop inefficiencies, calldata vs memory' },
               { icon: ClipboardList, title: 'Missing Patterns', desc: 'ReentrancyGuard, Pausable, event emissions, input validation' },
             ].map((item, i) => (
-              <div key={i} className="glass-card gradient-border flex gap-4 p-5 rounded-xl transition-colors">
+              <div key={i} className="glass-card flex gap-4 p-5 rounded-xl transition-colors">
                 <div className="flex-shrink-0">
-                  <item.icon className="w-6 h-6 text-cyan-400" />
+                  <item.icon className="w-6 h-6 text-zinc-400" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">{item.title}</h3>
@@ -117,17 +116,17 @@ export default function Home() {
             ))}
           </div>
 
-          <h3 className="font-semibold text-cyan-400 text-lg mb-4 flex items-center gap-2"><FileText className="w-5 h-5" /> Legal Contracts</h3>
+          <h3 className="font-semibold text-zinc-200 text-lg mb-4 flex items-center gap-2"><FileText className="w-5 h-5" /> Legal Contracts</h3>
           <div className="grid md:grid-cols-2 gap-4">
             {[
-              { icon: AlertTriangle, title: 'Red Flags', desc: 'One-sided liability, hidden fees, unfair penalties, auto-renewal traps' },
-              { icon: FileSearch, title: 'Missing Clauses', desc: 'Force majeure, limitation of liability, dispute resolution, IP ownership' },
-              { icon: Scale, title: 'Unfavorable Terms', desc: 'Non-compete overreach, broad indemnification, unilateral termination rights' },
-              { icon: Lock, title: 'Compliance Notes', desc: 'Potential regulatory issues, jurisdiction conflicts, employment law risks' },
+              { icon: AlertTriangle, title: 'Red Flags & Redlines', desc: 'Unfair terms flagged with specific replacement language you can copy-paste' },
+              { icon: FileSearch, title: 'Cross-Clause Risks', desc: 'How clauses interact to create hidden risks (e.g., payment + termination traps)' },
+              { icon: Scale, title: 'Industry Benchmarks', desc: 'Compare your terms against market standards for your contract type' },
+              { icon: Lock, title: 'Priority Action Items', desc: 'DO FIRST / Important / Nice to have — ranked so you know what to fix first' },
             ].map((item, i) => (
-              <div key={i} className="glass-card gradient-border flex gap-4 p-5 rounded-xl transition-colors">
+              <div key={i} className="glass-card flex gap-4 p-5 rounded-xl transition-colors">
                 <div className="flex-shrink-0">
-                  <item.icon className="w-6 h-6 text-cyan-400" />
+                  <item.icon className="w-6 h-6 text-zinc-400" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">{item.title}</h3>
@@ -143,11 +142,11 @@ export default function Home() {
       <section className="max-w-4xl mx-auto px-6 py-16 text-center">
         <Link
           href="/analyze"
-          className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-4 rounded-xl transition-colors text-lg cta-glow inline-block"
+          className="bg-white hover:bg-zinc-200 text-black font-semibold px-8 py-4 rounded-xl transition-colors text-lg inline-block"
         >
           Scan Your Contract Now
         </Link>
-        <p className="text-sm text-zinc-400 mt-3">60-second analysis · No signup required</p>
+        <p className="text-sm text-zinc-400 mt-3">60-second analysis &middot; No signup required</p>
       </section>
 
       {/* Pricing */}
@@ -156,31 +155,33 @@ export default function Home() {
           Simple Pricing
         </h2>
         <p className="text-center text-zinc-300 mb-12">
-          One-time payment. No subscriptions. Lifetime access.
+          5 analysis credits. No subscriptions. Use anytime.
         </p>
 
-        <div className="max-w-md mx-auto glass-card gradient-border rounded-2xl p-8 text-center relative">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-500 text-black text-xs font-bold px-3 py-1 rounded-full">
+        <div className="max-w-md mx-auto glass-card rounded-2xl p-8 text-center relative">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-black text-xs font-bold px-3 py-1 rounded-full">
             LAUNCH SPECIAL
           </div>
 
           <p className="text-5xl font-bold text-white">$49</p>
-          <p className="text-zinc-300 mt-1">per analysis · lifetime access</p>
+          <p className="text-zinc-300 mt-1">for 5 analyses</p>
+          <p className="text-zinc-400 text-sm mt-0.5">Just $9.80 per analysis</p>
 
           <ul className="text-left mt-6 space-y-3.5 text-base text-zinc-200">
-            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 flex-shrink-0" /> Full risk reports with recommendations</li>
-            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 flex-shrink-0" /> Legal contracts (PDF & DOCX)</li>
-            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 flex-shrink-0" /> Smart contracts (Solidity .sol)</li>
-            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 flex-shrink-0" /> 60-second analysis time</li>
-            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 flex-shrink-0" /> Privacy-first (never stored)</li>
-            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-cyan-400 flex-shrink-0" /> 14-day money-back guarantee</li>
+            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-zinc-400 flex-shrink-0" /> 5 full analysis credits</li>
+            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-zinc-400 flex-shrink-0" /> Redline suggestions with replacement language</li>
+            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-zinc-400 flex-shrink-0" /> Cross-clause risk analysis</li>
+            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-zinc-400 flex-shrink-0" /> Industry benchmark comparisons</li>
+            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-zinc-400 flex-shrink-0" /> Legal contracts + smart contracts</li>
+            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-zinc-400 flex-shrink-0" /> Privacy-first (never stored)</li>
+            <li className="flex items-center gap-2"><Check className="w-4 h-4 text-zinc-400 flex-shrink-0" /> 14-day money-back guarantee</li>
           </ul>
 
           <Link
             href="/analyze"
-            className="mt-8 block w-full bg-cyan-500 hover:bg-cyan-400 text-black font-semibold py-3 rounded-lg transition-colors cta-glow"
+            className="mt-8 block w-full bg-white hover:bg-zinc-200 text-black font-semibold py-3 rounded-lg transition-colors"
           >
-            Get Started — $49
+            Get 5 Credits &mdash; $49
           </Link>
         </div>
 
@@ -207,7 +208,7 @@ export default function Home() {
       <footer className="border-t py-6" style={{ borderColor: 'var(--border)' }}>
         <div className="max-w-5xl mx-auto px-6 flex items-center justify-between text-sm text-zinc-400">
           <span className="font-mono font-bold tracking-wider">CAVEAT</span>
-          <span>Built with AI · Powered by OpenAI</span>
+          <span>Built with AI &middot; Powered by OpenAI</span>
         </div>
       </footer>
     </div>

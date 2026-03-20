@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { extractText, validateFile } from '@/lib/pdf';
 import { analyzeContract, getContractPreview } from '@/lib/analyzer';
-import { cacheAnalysis } from '@/lib/stripe';
+import { cacheAnalysis, getCustomerCredits, decrementCredits } from '@/lib/stripe';
 import { randomUUID } from 'crypto';
 
 export const maxDuration = 60;
@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
+    const customerId = formData.get('customerId') as string | null;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -39,7 +40,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Run full analysis upfront, cache it, return preview to the user
+    // Check if user has credits
+    let hasCredits = false;
+    if (customerId) {
+      try {
+        const credits = await getCustomerCredits(customerId);
+        hasCredits = credits > 0;
+      } catch {
+        hasCredits = false;
+      }
+    }
+
+    if (hasCredits && customerId) {
+      // Full analysis — deduct credit
+      let fullAnalysis;
+      try {
+        fullAnalysis = await analyzeContract(contractText);
+      } catch (aiError) {
+        const message = aiError instanceof Error ? aiError.message : String(aiError);
+        console.error('AI analysis error:', message);
+        return NextResponse.json({ error: `Analysis failed: ${message}` }, { status: 500 });
+      }
+
+      const remaining = await decrementCredits(customerId);
+
+      return NextResponse.json({
+        preview: false,
+        creditsRemaining: remaining,
+        ...fullAnalysis,
+      });
+    }
+
+    // Free preview tier
     let preview, fullAnalysis;
     try {
       [preview, fullAnalysis] = await Promise.all([

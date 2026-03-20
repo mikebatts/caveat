@@ -21,6 +21,7 @@ function SuccessContent() {
   const [result, setResult] = useState<FullResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [creditsPurchased, setCreditsPurchased] = useState(false);
 
   useEffect(() => {
     if (!sessionId) {
@@ -29,10 +30,22 @@ function SuccessContent() {
       return;
     }
 
+    // Retrieve customer ID from session and store it
     fetch(`/api/results?session_id=${encodeURIComponent(sessionId)}`)
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to load results');
+
+        // Store customer ID from the session
+        if (data.customerId) {
+          localStorage.setItem('caveat_customer_id', data.customerId);
+        }
+
+        // Credit pack purchase — no analysis to show
+        if (data.creditPurchase) {
+          setCreditsPurchased(true);
+          return;
+        }
 
         // If server returned full data from cache, use it directly
         if (!data.useClientCache) {
@@ -70,8 +83,8 @@ function SuccessContent() {
       {loading && (
         <div className="text-center py-20">
           <div className="spinner spinner-lg mx-auto mb-4" />
-          <p className="text-lg font-semibold text-white">Loading your full report...</p>
-          <p className="text-sm text-zinc-400 mt-1">Verifying payment and preparing results</p>
+          <p className="text-lg font-semibold text-white">Processing your payment...</p>
+          <p className="text-sm text-zinc-400 mt-1">Verifying payment and preparing your credits</p>
         </div>
       )}
 
@@ -82,10 +95,28 @@ function SuccessContent() {
           <p className="text-zinc-400 mb-6">{error}</p>
           <Link
             href="/analyze"
-            className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-6 py-3 rounded-lg transition-colors"
+            className="bg-white hover:bg-zinc-200 text-black font-semibold px-6 py-3 rounded-lg transition-colors"
           >
             Analyze Another Contract
           </Link>
+        </div>
+      )}
+
+      {creditsPurchased && (
+        <div className="text-center py-20">
+          <div className="rounded-xl p-6 mb-8 inline-block" style={{ background: '#0f2922', border: '1px solid #166534' }}>
+            <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
+            <p className="text-lg font-semibold text-emerald-400">Payment successful!</p>
+            <p className="text-sm text-emerald-300 mt-1">You have 5 analysis credits</p>
+          </div>
+          <div>
+            <Link
+              href="/analyze"
+              className="bg-white hover:bg-zinc-200 text-black font-semibold px-8 py-3 rounded-lg transition-colors inline-block"
+            >
+              Start Analyzing &rarr;
+            </Link>
+          </div>
         </div>
       )}
 
@@ -108,9 +139,9 @@ function SuccessContent() {
           <div className="mt-8 text-center">
             <Link
               href="/analyze"
-              className="text-cyan-400 hover:text-cyan-300 font-medium"
+              className="text-zinc-400 hover:text-zinc-300 font-medium"
             >
-              ← Analyze another contract
+              &larr; Analyze another contract
             </Link>
           </div>
         </div>

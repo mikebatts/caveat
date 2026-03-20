@@ -8,19 +8,34 @@ type InputMode = 'upload' | 'paste' | 'address';
 interface SmartContractInputProps {
   onAnalyze: (result: Record<string, unknown>) => void;
   isAnalyzing: boolean;
+  customerId?: string | null;
 }
 
-export default function SmartContractInput({ onAnalyze, isAnalyzing }: SmartContractInputProps) {
+export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAnalyzing, customerId }: SmartContractInputProps) {
   const [mode, setMode] = useState<InputMode>('upload');
   const [code, setCode] = useState('');
   const [address, setAddress] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [internalAnalyzing, setInternalAnalyzing] = useState(false);
+
+  const isAnalyzing = externalAnalyzing || internalAnalyzing;
 
   const handleSubmit = async (body: FormData | object) => {
     setError(null);
+    setInternalAnalyzing(true);
     try {
       const isFormData = body instanceof FormData;
+
+      // Add customerId to requests
+      if (customerId) {
+        if (isFormData) {
+          (body as FormData).append('customerId', customerId);
+        } else {
+          (body as Record<string, unknown>).customerId = customerId;
+        }
+      }
+
       const response = await fetch('/api/analyze-smart', {
         method: 'POST',
         ...(isFormData
@@ -38,6 +53,8 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing }: SmartCont
       onAnalyze(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setInternalAnalyzing(false);
     }
   };
 
@@ -52,7 +69,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing }: SmartCont
       handleSubmit(formData);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [customerId]
   );
 
   const handleDrop = useCallback(
@@ -82,7 +99,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing }: SmartCont
             disabled={isAnalyzing}
             className={`flex-1 text-sm font-medium py-2 px-3 rounded-md transition-colors ${
               mode === tab.key
-                ? 'bg-cyan-500/10 text-cyan-400'
+                ? 'bg-white/10 text-white'
                 : 'text-zinc-500 hover:text-zinc-300'
             }`}
           >
@@ -101,13 +118,13 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing }: SmartCont
             relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer
             transition-all duration-200
             ${isDragging
-              ? 'border-cyan-500 scale-[1.02]'
-              : 'border-zinc-700 hover:border-cyan-500/50'
+              ? 'border-zinc-400 scale-[1.02]'
+              : 'border-zinc-700 hover:border-zinc-500'
             }
             ${isAnalyzing ? 'opacity-50 pointer-events-none' : ''}
           `}
           style={{
-            background: isDragging ? 'rgba(6, 182, 212, 0.1)' : 'transparent',
+            background: isDragging ? 'rgba(255, 255, 255, 0.03)' : 'transparent',
           }}
         >
           <input
@@ -125,7 +142,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing }: SmartCont
               {isAnalyzing ? (
                 <div className="spinner spinner-lg" />
               ) : isDragging ? (
-                <Download className="w-12 h-12 text-cyan-400" />
+                <Download className="w-12 h-12 text-zinc-400" />
               ) : (
                 <Code className="w-12 h-12 text-zinc-400" />
               )}
@@ -139,7 +156,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing }: SmartCont
               </p>
             </div>
             {!isAnalyzing && (
-              <p className="text-xs text-zinc-500">Max 500KB · Your code is never stored</p>
+              <p className="text-xs text-zinc-500">Max 500KB &middot; Your code is never stored</p>
             )}
           </div>
         </div>
@@ -148,48 +165,66 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing }: SmartCont
       {/* Paste Code */}
       {mode === 'paste' && (
         <div className="space-y-3">
-          <textarea
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="// SPDX-License-Identifier: MIT&#10;pragma solidity ^0.8.0;&#10;&#10;// Paste your Solidity code here..."
-            disabled={isAnalyzing}
-            className="w-full h-64 p-4 rounded-xl border font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50 text-zinc-100 placeholder-zinc-600"
-            style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
-          />
-          <button
-            onClick={() => handleSubmit({ source_code: code })}
-            disabled={isAnalyzing || !code.trim()}
-            className="w-full bg-cyan-500 hover:bg-cyan-400 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-semibold py-3 rounded-lg transition-colors"
-          >
-            {isAnalyzing ? 'Analyzing...' : 'Analyze Smart Contract'}
-          </button>
+          {isAnalyzing ? (
+            <div className="border-2 border-dashed border-zinc-700 rounded-2xl p-12 text-center">
+              <div className="spinner spinner-lg mx-auto mb-4" />
+              <p className="text-lg font-semibold text-zinc-100">Analyzing smart contract...</p>
+              <p className="text-sm text-zinc-400 mt-1">This usually takes 30-60 seconds</p>
+            </div>
+          ) : (
+            <>
+              <textarea
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="// SPDX-License-Identifier: MIT&#10;pragma solidity ^0.8.0;&#10;&#10;// Paste your Solidity code here..."
+                className="w-full h-64 p-4 rounded-xl border font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent text-zinc-100 placeholder-zinc-600"
+                style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+              />
+              <button
+                onClick={() => handleSubmit({ source_code: code })}
+                disabled={!code.trim()}
+                className="w-full bg-white hover:bg-zinc-200 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-semibold py-3 rounded-lg transition-colors"
+              >
+                Analyze Smart Contract
+              </button>
+            </>
+          )}
         </div>
       )}
 
       {/* Contract Address */}
       {mode === 'address' && (
         <div className="space-y-3">
-          <div className="relative">
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="0x..."
-              disabled={isAnalyzing}
-              className="w-full p-4 rounded-xl border font-mono text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent disabled:opacity-50 text-zinc-100 placeholder-zinc-600"
-              style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
-            />
-          </div>
-          <p className="text-xs text-zinc-500">
-            Enter a verified contract address on Ethereum mainnet. Source will be fetched from Etherscan.
-          </p>
-          <button
-            onClick={() => handleSubmit({ contract_address: address })}
-            disabled={isAnalyzing || !address.trim()}
-            className="w-full bg-cyan-500 hover:bg-cyan-400 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-semibold py-3 rounded-lg transition-colors"
-          >
-            {isAnalyzing ? 'Fetching & Analyzing...' : 'Fetch & Analyze'}
-          </button>
+          {isAnalyzing ? (
+            <div className="border-2 border-dashed border-zinc-700 rounded-2xl p-12 text-center">
+              <div className="spinner spinner-lg mx-auto mb-4" />
+              <p className="text-lg font-semibold text-zinc-100">Fetching & analyzing contract...</p>
+              <p className="text-sm text-zinc-400 mt-1">This usually takes 30-60 seconds</p>
+            </div>
+          ) : (
+            <>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="0x..."
+                  className="w-full p-4 rounded-xl border font-mono text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent text-zinc-100 placeholder-zinc-600"
+                  style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+                />
+              </div>
+              <p className="text-xs text-zinc-500">
+                Enter a verified contract address on Ethereum mainnet. Source will be fetched from Etherscan.
+              </p>
+              <button
+                onClick={() => handleSubmit({ contract_address: address })}
+                disabled={!address.trim()}
+                className="w-full bg-white hover:bg-zinc-200 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-semibold py-3 rounded-lg transition-colors"
+              >
+                Fetch & Analyze
+              </button>
+            </>
+          )}
         </div>
       )}
 
