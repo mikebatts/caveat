@@ -3,9 +3,17 @@ import { Lock, Zap, DollarSign, FileText, Code, ShieldAlert, FileSearch, Scale, 
 
 export default function Home() {
   return (
-    <div className="min-h-screen" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
+    <div className="min-h-screen">
+      {/* Ambient floating blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="ambient-blob w-[500px] h-[500px] bg-violet-600/15 top-[-10%] left-[15%]" />
+        <div className="ambient-blob w-[400px] h-[400px] bg-blue-500/10 top-[20%] right-[-5%]" style={{ animationDelay: '-5s' }} />
+        <div className="ambient-blob w-[350px] h-[350px] bg-violet-500/10 bottom-[10%] left-[50%]" style={{ animationDelay: '-10s' }} />
+        <div className="ambient-blob w-[300px] h-[300px] bg-amber-500/8 bottom-[30%] left-[-5%]" style={{ animationDelay: '-15s' }} />
+      </div>
+
       {/* Header */}
-      <header className="border-b sticky top-0 z-50 liquid-glass" style={{ borderColor: 'var(--glass-border)', borderRadius: 0 }}>
+      <header className="border-b border-white/15 sticky top-0 z-50 liquid-glass" style={{ borderRadius: 0 }}>
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <span className="font-mono font-bold text-xl tracking-wider text-white">CAVEAT</span>
           <Link
@@ -18,12 +26,12 @@ export default function Home() {
       </header>
 
       {/* Hero — two-column */}
-      <section className="relative max-w-5xl mx-auto px-6 pt-24 pb-20">
+      <section className="relative max-w-5xl mx-auto px-6 pt-32 pb-28">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full opacity-[0.08]" style={{ background: 'radial-gradient(circle, #7c3aed, transparent 70%)' }} />
         <div className="relative grid md:grid-cols-2 gap-16 items-center">
           {/* Left — text */}
           <div>
-            <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em' }}>
+            <h1 className="text-6xl md:text-7xl font-bold text-white leading-tight font-serif tracking-[-0.03em]">
               AI-Powered<br />
               <span className="text-violet-400">Contract Intelligence</span>
             </h1>
@@ -54,7 +62,7 @@ export default function Home() {
 
           {/* Right — sample report card */}
           <div className="relative">
-            <div className="liquid-glass-elevated p-6 overflow-hidden">
+            <div className="command-center p-8 overflow-hidden">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs px-2 py-0.5 rounded-full bg-violet-600/20 text-violet-400 border border-violet-500/30 font-medium">SaaS Agreement</span>
                 <span className="text-xs text-zinc-500">Just now</span>
@@ -83,14 +91,15 @@ export default function Home() {
                 </div>
               </div>
               {/* Fade bottom */}
-              <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#0a0a0f] to-transparent rounded-b-[20px]" />
+              <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#0a0a0f] to-transparent rounded-b-[28px]" />
             </div>
           </div>
         </div>
       </section>
 
       {/* Social Proof Bar */}
-      <section className="border-y py-6" style={{ borderColor: 'var(--glass-border)', background: 'var(--glass-bg)' }}>
+      <div className="section-divider" />
+      <section className="py-6 liquid-glass" style={{ borderRadius: 0 }}>
         <div className="max-w-5xl mx-auto px-6 flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-300 font-medium">
           <span className="flex items-center gap-2 text-violet-400 font-semibold">2,100+ contracts analyzed</span>
           <span className="flex items-center gap-2"><Lock className="w-4 h-4 text-violet-400" /> Privacy-first (never stored)</span>
@@ -100,10 +109,11 @@ export default function Home() {
           <span className="flex items-center gap-2"><Code className="w-4 h-4 text-violet-400" /> Smart Contracts</span>
         </div>
       </section>
+      <div className="section-divider" />
 
       {/* How It Works */}
-      <section id="how-it-works" className="max-w-4xl mx-auto px-6 py-24">
-        <h2 className="text-3xl font-bold text-center text-white mb-14" style={{ fontFamily: 'var(--font-serif)' }}>
+      <section id="how-it-works" className="max-w-4xl mx-auto px-6 pt-32 pb-24">
+        <h2 className="text-4xl font-bold text-center text-white mb-14 font-serif section-title-editorial mx-auto">
           How It Works
         </h2>
 
@@ -115,7 +125,7 @@ export default function Home() {
             { icon: Check, title: 'Take Action', desc: 'Priority-ranked action items you can act on' },
           ].map((step, i) => (
             <div key={i} className="text-center">
-              <div className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center relative" style={{ background: 'rgba(124, 58, 237, 0.08)', border: '1px solid rgba(124, 58, 237, 0.25)' }}>
+              <div className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center relative bg-violet-600/10 border border-violet-500/25">
                 <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-violet-600 text-white text-xs font-bold flex items-center justify-center">{i + 1}</span>
                 <step.icon className="w-6 h-6 text-violet-400" />
               </div>
@@ -127,9 +137,10 @@ export default function Home() {
       </section>
 
       {/* What It Detects */}
-      <section className="border-y py-24" style={{ borderColor: 'var(--glass-border)', background: 'var(--glass-bg)' }}>
+      <div className="section-divider" />
+      <section className="pt-28 pb-32">
         <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-white mb-4" style={{ fontFamily: 'var(--font-serif)' }}>
+          <h2 className="text-4xl font-bold text-center text-white mb-4 font-serif section-title-editorial mx-auto">
             What Caveat Detects
           </h2>
           <p className="text-center text-zinc-300 mb-14">
@@ -183,17 +194,18 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <div className="section-divider" />
 
       {/* Sample Report Preview */}
-      <section className="max-w-4xl mx-auto px-6 py-24">
-        <h2 className="text-3xl font-bold text-center text-white mb-4" style={{ fontFamily: 'var(--font-serif)' }}>
+      <section className="max-w-4xl mx-auto px-6 pt-24 pb-32">
+        <h2 className="text-4xl font-bold text-center text-white mb-4 font-serif section-title-editorial mx-auto">
           See What You Get
         </h2>
         <p className="text-center text-zinc-300 mb-12">
           Every analysis includes actionable intelligence you can use immediately
         </p>
 
-        <div className="relative max-w-2xl mx-auto liquid-glass-elevated p-6 overflow-hidden">
+        <div className="relative max-w-2xl mx-auto command-center p-8 overflow-hidden">
           {/* Contract type badge */}
           <div className="flex items-center gap-3 mb-5">
             <span className="text-xs px-2.5 py-1 rounded-full bg-violet-600/20 text-violet-400 border border-violet-500/30 font-medium">Freelance Agreement</span>
@@ -201,7 +213,7 @@ export default function Home() {
           </div>
 
           {/* Executive summary bullets */}
-          <div className="rounded-xl border p-4 mb-4" style={{ background: 'var(--surface-raised)', borderColor: 'var(--border)' }}>
+          <div className="rounded-xl border border-white/10 p-4 mb-4 liquid-glass" style={{ borderRadius: '12px' }}>
             <h4 className="text-sm font-semibold text-white mb-2">Executive Summary</h4>
             <div className="space-y-1.5">
               <div className="flex items-start gap-2 text-sm">
@@ -220,14 +232,14 @@ export default function Home() {
           </div>
 
           {/* Redline suggestion */}
-          <div className="rounded-xl border p-4 mb-4" style={{ background: 'var(--surface-raised)', borderColor: 'var(--border)' }}>
+          <div className="rounded-xl border border-white/10 p-4 mb-4 liquid-glass" style={{ borderRadius: '12px' }}>
             <h4 className="text-sm font-semibold text-white mb-2">Redline Suggestion</h4>
             <p className="text-zinc-500 text-sm line-through mb-1">&quot;All work product, including pre-existing materials, shall be owned exclusively by Client.&quot;</p>
             <p className="text-emerald-300 text-sm font-medium">&quot;All work product created specifically for this engagement shall be owned by Client. Contractor retains ownership of pre-existing materials.&quot;</p>
           </div>
 
           {/* Benchmark row */}
-          <div className="rounded-xl border p-4" style={{ background: 'var(--surface-raised)', borderColor: 'var(--border)' }}>
+          <div className="rounded-xl border border-white/10 p-4 liquid-glass" style={{ borderRadius: '12px' }}>
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-white">Payment Terms</span>
               <span className="text-xs px-2 py-0.5 rounded-full bg-red-900/50 text-red-300 border border-red-800">Below standard</span>
@@ -245,7 +257,7 @@ export default function Home() {
           </div>
 
           {/* Fade bottom */}
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a0a0f] to-transparent rounded-b-[20px]" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a0a0f] to-transparent rounded-b-[28px]" />
         </div>
 
         <div className="text-center mt-8">
@@ -259,22 +271,23 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section className="max-w-4xl mx-auto px-6 py-24">
-        <h2 className="text-3xl font-bold text-center text-white mb-4" style={{ fontFamily: 'var(--font-serif)' }}>
+      <div className="section-divider" />
+      <section className="max-w-4xl mx-auto px-6 pt-28 pb-36">
+        <h2 className="text-4xl font-bold text-center text-white mb-4 font-serif section-title-editorial mx-auto">
           Simple Pricing
         </h2>
         <p className="text-center text-zinc-300 mb-14">
           5 analysis credits. No subscriptions. Use anytime.
         </p>
 
-        <div className="max-w-md mx-auto liquid-glass-elevated accent-glow-ring p-8 text-center relative">
+        <div className="max-w-md mx-auto liquid-glass-violet accent-glow-ring p-8 text-center relative rounded-2xl">
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-black text-xs font-bold px-3 py-1 rounded-full">
             LAUNCH SPECIAL
           </div>
 
-          <p className="text-5xl font-bold text-white" style={{ fontFamily: 'var(--font-serif)' }}>
+          <p className="text-5xl font-bold text-white font-serif">
             $49
-            <span className="text-xl text-zinc-500 line-through ml-2" style={{ fontFamily: 'var(--font-geist-sans), sans-serif' }}>$79</span>
+            <span className="text-xl text-zinc-500 line-through ml-2 font-sans">$79</span>
           </p>
           <p className="text-zinc-300 mt-1">for 5 analyses</p>
           <p className="text-zinc-400 text-sm mt-0.5">Just $9.80 per analysis</p>
@@ -307,7 +320,8 @@ export default function Home() {
       </section>
 
       {/* Disclaimer */}
-      <section className="border-t py-8" style={{ borderColor: 'var(--glass-border)' }}>
+      <div className="section-divider" />
+      <section className="py-8">
         <div className="max-w-2xl mx-auto px-6 text-center text-xs text-zinc-400">
           <p className="mb-2 flex items-center justify-center gap-1">
             <AlertTriangle className="w-3 h-3" /> <strong>Disclaimer:</strong> Caveat provides AI-generated informational analysis only.
@@ -321,7 +335,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-6" style={{ borderColor: 'var(--glass-border)' }}>
+      <footer className="border-t border-white/10 py-6">
         <div className="max-w-5xl mx-auto px-6 flex items-center justify-between text-sm text-zinc-400">
           <span className="font-mono font-bold tracking-wider">CAVEAT</span>
           <span>Built with AI &middot; Powered by OpenAI</span>

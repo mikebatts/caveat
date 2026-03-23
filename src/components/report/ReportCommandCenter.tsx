@@ -22,7 +22,7 @@ interface ReportCommandCenterProps {
 
 export default function ReportCommandCenter({ riskScore, contractType, severityCounts, stats }: ReportCommandCenterProps) {
   return (
-    <div className="liquid-glass-elevated p-6 space-y-5">
+    <div className="command-center p-8 md:p-10 space-y-5">
       {contractType && (
         <div className="flex items-center gap-2">
           <span className="text-xs px-2.5 py-1 rounded-full bg-violet-600/20 text-violet-400 border border-violet-500/30 font-medium">
@@ -31,7 +31,7 @@ export default function ReportCommandCenter({ riskScore, contractType, severityC
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row gap-6 items-center">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center">
         {/* Left: Risk Gauge */}
         <RiskGauge score={riskScore} />
 

@@ -20,7 +20,7 @@ export default function SeverityBreakdown({ counts }: SeverityBreakdownProps) {
   return (
     <div>
       {/* Stacked bar */}
-      <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
+      <div className="flex h-4 rounded-full overflow-hidden gap-0.5">
         {segments.map(({ key, color }) => {
           const pct = (counts[key] / total) * 100;
           if (pct === 0) return null;

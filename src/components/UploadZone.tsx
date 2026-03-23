@@ -52,9 +52,6 @@ export default function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProp
         }
         ${isAnalyzing ? 'opacity-50 pointer-events-none' : ''}
       `}
-      style={{
-        background: isDragging ? 'rgba(124, 58, 237, 0.08)' : 'var(--glass-bg)',
-      }}
     >
       <input
         type="file"
@@ -69,9 +66,9 @@ export default function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProp
           {isAnalyzing ? (
             <div className="spinner spinner-lg" />
           ) : isDragging ? (
-            <Download className="w-12 h-12 text-violet-400" />
+            <Download className="w-16 h-16 text-violet-400" />
           ) : (
-            <FileUp className="w-12 h-12 text-zinc-400" />
+            <FileUp className="w-16 h-16 text-zinc-400" />
           )}
         </div>
 

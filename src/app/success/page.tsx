@@ -83,7 +83,7 @@ function SuccessContent() {
   const isSmart = result?.analysisType === 'smart';
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-12">
+    <main className="max-w-3xl mx-auto px-6 py-12 relative z-10">
       {loading && (
         <div className="text-center py-20">
           <div className="spinner spinner-lg mx-auto mb-4" />
@@ -156,9 +156,15 @@ function SuccessContent() {
 
 export default function SuccessPage() {
   return (
-    <div className="min-h-screen" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
+    <div className="min-h-screen">
+      {/* Ambient floating blobs (subtle) */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="ambient-blob w-[300px] h-[300px] bg-violet-600/8 top-[10%] left-[20%]" />
+        <div className="ambient-blob w-[250px] h-[250px] bg-emerald-500/6 top-[40%] right-[10%]" style={{ animationDelay: '-8s' }} />
+      </div>
+
       {/* Header */}
-      <header className="border-b sticky top-0 z-50 liquid-glass" style={{ borderColor: 'var(--glass-border)', borderRadius: 0 }}>
+      <header className="border-b border-white/15 sticky top-0 z-50 liquid-glass" style={{ borderRadius: 0 }}>
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="font-mono font-bold text-xl tracking-wider text-white">
             CAVEAT
@@ -179,7 +185,7 @@ export default function SuccessPage() {
       </Suspense>
 
       {/* Disclaimer */}
-      <footer className="border-t py-6 mt-12" style={{ borderColor: 'var(--border)' }}>
+      <footer className="border-t border-white/10 py-6 mt-12">
         <div className="max-w-2xl mx-auto px-6 text-center text-xs text-zinc-400 flex items-center justify-center gap-1">
           <AlertTriangle className="w-3 h-3" /> AI-generated analysis only. Not legal advice. Not a security audit. Consult appropriate professionals.
         </div>

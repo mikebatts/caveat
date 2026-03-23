@@ -123,9 +123,6 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
             }
             ${isAnalyzing ? 'opacity-50 pointer-events-none' : ''}
           `}
-          style={{
-            background: isDragging ? 'rgba(124, 58, 237, 0.08)' : 'var(--glass-bg)',
-          }}
         >
           <input
             type="file"
@@ -142,9 +139,9 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
               {isAnalyzing ? (
                 <div className="spinner spinner-lg" />
               ) : isDragging ? (
-                <Download className="w-12 h-12 text-zinc-400" />
+                <Download className="w-16 h-16 text-zinc-400" />
               ) : (
-                <Code className="w-12 h-12 text-zinc-400" />
+                <Code className="w-16 h-16 text-zinc-400" />
               )}
             </div>
             <div>
@@ -177,8 +174,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="// SPDX-License-Identifier: MIT&#10;pragma solidity ^0.8.0;&#10;&#10;// Paste your Solidity code here..."
-                className="w-full h-64 p-4 rounded-xl border font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent text-zinc-100 placeholder-zinc-600"
-                style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+                className="w-full h-64 p-4 rounded-xl border border-white/10 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent text-zinc-100 placeholder-zinc-600 bg-white/5"
               />
               <button
                 onClick={() => handleSubmit({ source_code: code })}
@@ -209,8 +205,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="0x..."
-                  className="w-full p-4 rounded-xl border font-mono text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent text-zinc-100 placeholder-zinc-600"
-                  style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+                  className="w-full p-4 rounded-xl border border-white/10 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent text-zinc-100 placeholder-zinc-600 bg-white/5"
                 />
               </div>
               <p className="text-xs text-zinc-500">

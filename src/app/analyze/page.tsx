@@ -143,9 +143,16 @@ export default function AnalyzePage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
+    <div className="min-h-screen">
+      {/* Ambient floating blobs (subtler) */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="ambient-blob w-[350px] h-[350px] bg-violet-600/10 top-[-5%] left-[20%]" />
+        <div className="ambient-blob w-[300px] h-[300px] bg-blue-500/8 top-[30%] right-[-5%]" style={{ animationDelay: '-7s' }} />
+        <div className="ambient-blob w-[250px] h-[250px] bg-violet-500/8 bottom-[15%] left-[60%]" style={{ animationDelay: '-12s' }} />
+      </div>
+
       {/* Header */}
-      <header className="border-b sticky top-0 z-50 liquid-glass" style={{ borderColor: 'var(--glass-border)', borderRadius: 0 }}>
+      <header className="border-b border-white/15 sticky top-0 z-50 liquid-glass" style={{ borderRadius: 0 }}>
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="font-mono font-bold text-xl tracking-wider text-white">
             CAVEAT
@@ -162,10 +169,10 @@ export default function AnalyzePage() {
       </header>
 
       {/* Content */}
-      <main className="max-w-3xl mx-auto px-6 py-12">
+      <main className="max-w-3xl mx-auto px-6 py-12 relative z-10">
         {!result && (
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2" style={{ fontFamily: 'var(--font-serif)' }}>
+            <h1 className="text-4xl font-bold text-white mb-2 font-serif">
               Analyze Your Contract
             </h1>
             <p className="text-zinc-400">
@@ -251,7 +258,7 @@ export default function AnalyzePage() {
 
             {isRedirecting && (
               <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-                <div className="rounded-xl p-8 text-center max-w-sm mx-4" style={{ background: 'var(--surface-raised)' }}>
+                <div className="liquid-glass-elevated rounded-xl p-8 text-center max-w-sm mx-4">
                   <div className="spinner spinner-lg mx-auto mb-4" />
                   <p className="font-semibold text-white">Redirecting to checkout...</p>
                   <p className="text-sm text-zinc-400 mt-1">You&apos;ll be taken to Stripe to complete payment</p>
@@ -263,7 +270,7 @@ export default function AnalyzePage() {
       </main>
 
       {/* Disclaimer */}
-      <footer className="border-t py-6 mt-12" style={{ borderColor: 'var(--border)' }}>
+      <footer className="border-t border-white/10 py-6 mt-12">
         <div className="max-w-2xl mx-auto px-6 text-center text-xs text-zinc-400 flex items-center justify-center gap-1">
           <AlertTriangle className="w-3 h-3" /> AI-generated analysis only. Not legal advice. Not a security audit. Consult appropriate professionals.
         </div>

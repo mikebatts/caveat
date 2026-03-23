@@ -26,16 +26,16 @@ export default function CollapsibleSection({
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div id={id} className="liquid-glass p-6">
+    <div id={id} className="liquid-glass p-6 md:p-8">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center gap-3 text-left"
       >
         {icon}
-        <h3 className="font-serif text-lg font-semibold text-white flex-1" style={{ fontFamily: 'var(--font-serif)' }}>
+        <h3 className="font-serif text-xl font-semibold text-white flex-1 section-title-editorial">
           {title}
         </h3>
-        <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">
+        <span className="text-xs px-2 py-0.5 rounded-full bg-violet-600/20 text-violet-400 border border-violet-500/30">
           {count}
         </span>
         <svg

@@ -60,12 +60,12 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
   ] : [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Preview Mode */}
       {result.preview && 'top_risks' in result && (
         <>
           {/* Teaser: show risk gauge */}
-          <div className="liquid-glass-elevated p-6 flex flex-col items-center gap-4">
+          <div className="command-center p-8 flex flex-col items-center gap-4">
             <RiskGauge score={riskScore} />
             <p className="text-zinc-300 text-center">{result.summary}</p>
             {'vulnerability_count' in result && (
@@ -91,8 +91,8 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
           )}
 
           {/* Paywall */}
-          <div className="liquid-glass-elevated accent-glow-ring rounded-2xl p-8 text-center">
-            <p className="text-2xl font-bold text-white mb-2" style={{ fontFamily: 'var(--font-serif)' }}>
+          <div className="liquid-glass-violet accent-glow-ring rounded-2xl p-10 text-center">
+            <p className="text-3xl font-bold text-white mb-2 font-serif">
               Unlock Full Security Report
             </p>
             <p className="text-zinc-300 mb-6">
@@ -120,7 +120,7 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
             <ExportButton reportId="caveat-report" filename="caveat-smart-contract-report.pdf" />
           </div>
 
-          <div id="caveat-report" className="space-y-6">
+          <div id="caveat-report" className="space-y-8">
             {/* Command Center */}
             <div id="section-command">
               <ReportCommandCenter
@@ -132,8 +132,8 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
 
             {/* Executive Summary */}
             {fullResult.executive_summary && fullResult.executive_summary.length > 0 && (
-              <div id="section-summary" className="liquid-glass p-6">
-                <h3 className="text-lg font-semibold text-white mb-4" style={{ fontFamily: 'var(--font-serif)' }}>
+              <div id="section-summary" className="liquid-glass p-6 md:p-8">
+                <h3 className="font-serif text-xl font-semibold text-white mb-4 section-title-editorial">
                   Executive Summary
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -161,8 +161,8 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
 
             {/* Architecture Review */}
             {fullResult.architecture_review && (
-              <div id="section-architecture" className="liquid-glass p-6">
-                <h3 className="text-lg font-semibold text-white mb-4" style={{ fontFamily: 'var(--font-serif)' }}>
+              <div id="section-architecture" className="liquid-glass p-6 md:p-8">
+                <h3 className="font-serif text-xl font-semibold text-white mb-4 section-title-editorial">
                   Architecture Review
                 </h3>
                 <div className="grid md:grid-cols-2 gap-6">
@@ -336,8 +336,8 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
 
             {/* Recommendations */}
             {fullResult.recommendations.length > 0 && (
-              <div id="section-actions" className="liquid-glass p-6">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2" style={{ fontFamily: 'var(--font-serif)' }}>
+              <div id="section-actions" className="liquid-glass p-6 md:p-8">
+                <h3 className="font-serif text-xl font-semibold text-white mb-4 flex items-center gap-2 section-title-editorial">
                   <CheckCircle className="w-4 h-4 text-zinc-400" /> Recommended Actions
                 </h3>
 
@@ -396,7 +396,8 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
             )}
 
             {/* Disclaimer */}
-            <div className="text-center text-xs text-zinc-500 pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
+            <div className="section-divider" />
+            <div className="text-center text-xs text-zinc-500 pt-4">
               <p className="flex items-center justify-center gap-1"><AlertTriangle className="w-3 h-3" /> This is AI-generated analysis only. Not a security audit. Not financial advice.</p>
               <p>AI can miss exploits. Always get a professional audit before deploying to mainnet.</p>
             </div>
