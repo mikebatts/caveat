@@ -46,7 +46,7 @@ export default function QuickStats({ stats }: QuickStatsProps) {
   return (
     <div className="grid grid-cols-2 gap-3">
       {stats.map((stat) => (
-        <div key={stat.label} className="liquid-glass rounded-2xl p-4 flex items-center gap-3">
+        <div key={stat.label} className="liquid-glass rounded-xl p-4 flex items-center gap-3">
           <stat.icon className={`w-5 h-5 flex-shrink-0 ${stat.color}`} />
           <div>
             <p className="text-2xl font-bold text-white leading-none">{stat.value}</p>

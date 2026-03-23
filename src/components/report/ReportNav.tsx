@@ -67,7 +67,7 @@ export default function ReportNav({ sections }: ReportNavProps) {
 
       {/* Mobile: floating bottom bar */}
       <nav data-pdf-hidden className="lg:hidden fixed bottom-4 left-4 right-4 z-40">
-        <div className="liquid-glass-elevated p-2 flex gap-1 overflow-x-auto scrollbar-none">
+        <div className="liquid-glass p-2 flex gap-1 overflow-x-auto scrollbar-none">
           {sections.map(({ id, label }) => (
             <button
               key={id}

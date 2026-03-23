@@ -11,27 +11,24 @@
   --accent-light: #8b5cf6;
   --accent-glow: rgba(124, 58, 237, 0.15);
 
-  /* Liquid Glass tokens — visible */
-  --glass-bg: rgba(255, 255, 255, 0.08);
-  --glass-bg-hover: rgba(255, 255, 255, 0.12);
-  --glass-border: rgba(255, 255, 255, 0.18);
-  --glass-blur: 20px;
-  --glass-elevated-bg: rgba(255, 255, 255, 0.12);
-  --glass-elevated-border: rgba(255, 255, 255, 0.22);
+  /* Radius tokens — 3-tier system */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* Liquid Glass tokens */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg-hover: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-blur: 16px;
   --glass-violet-bg: rgba(124, 58, 237, 0.08);
   --glass-violet-border: rgba(124, 58, 237, 0.20);
-  --glass-inner-glow: rgba(255, 255, 255, 0.06);
-  --glass-specular: rgba(255, 255, 255, 0.04);
 
   /* Shadows */
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
-  --shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.4);
-  --shadow-violet: 0 8px 32px rgba(124, 58, 237, 0.15);
+  --shadow-glass: 0 1px 2px rgba(0, 0, 0, 0.3);
 
   /* Mesh colors */
-  --mesh-violet: rgba(124, 58, 237, 0.12);
-  --mesh-blue: rgba(59, 130, 246, 0.08);
-  --mesh-amber: rgba(245, 158, 11, 0.05);
+  --mesh-violet: rgba(124, 58, 237, 0.08);
 }
 
 @theme inline {
@@ -55,10 +52,8 @@ body::before {
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(ellipse 80% 60% at 20% 10%, var(--mesh-violet), transparent),
-    radial-gradient(ellipse 60% 50% at 80% 20%, var(--mesh-blue), transparent),
-    radial-gradient(ellipse 70% 40% at 50% 80%, rgba(124, 58, 237, 0.06), transparent),
-    radial-gradient(ellipse 40% 30% at 10% 70%, var(--mesh-amber), transparent);
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(124, 58, 237, 0.08), transparent),
+    radial-gradient(ellipse 70% 40% at 50% 80%, rgba(124, 58, 237, 0.04), transparent);
   pointer-events: none;
 }
 
@@ -66,157 +61,72 @@ body::before {
    Liquid Glass Cards
    ========================================= */
 .liquid-glass {
-  position: relative;
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  box-shadow: var(--shadow-glass), inset 0 1px 0 var(--glass-inner-glow);
-}
-.liquid-glass::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(135deg, var(--glass-specular) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-.liquid-glass-elevated {
-  position: relative;
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  background: var(--glass-elevated-bg);
-  border: 1px solid var(--glass-elevated-border);
-  border-radius: 20px;
-  box-shadow: var(--shadow-elevated), inset 0 1px 0 var(--glass-inner-glow);
-}
-.liquid-glass-elevated::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(135deg, var(--glass-specular) 0%, transparent 50%);
-  pointer-events: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-glass);
 }
 
 .liquid-glass-interactive {
-  position: relative;
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  box-shadow: var(--shadow-glass), inset 0 1px 0 var(--glass-inner-glow);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-glass);
   transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
-.liquid-glass-interactive::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(135deg, var(--glass-specular) 0%, transparent 50%);
-  pointer-events: none;
-}
 .liquid-glass-interactive:hover {
-  border-color: var(--glass-elevated-border);
+  border-color: rgba(255, 255, 255, 0.15);
   background: var(--glass-bg-hover);
-  box-shadow: var(--shadow-elevated), inset 0 1px 0 var(--glass-inner-glow);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   transform: translateY(-2px);
 }
 
 /* Violet-tinted glass — for premium sections */
 .liquid-glass-violet {
-  position: relative;
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   background: var(--glass-violet-bg);
   border: 1px solid var(--glass-violet-border);
-  border-radius: 20px;
-  box-shadow: var(--shadow-violet), inset 0 1px 0 rgba(124, 58, 237, 0.08);
-}
-.liquid-glass-violet::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.06) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-/* Legacy aliases */
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-glass);
 }
 
-.glass-card-hover {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  box-shadow: var(--shadow-glass);
-  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-}
-.glass-card-hover:hover {
-  border-color: var(--glass-elevated-border);
-  background: var(--glass-bg-hover);
-  box-shadow: var(--shadow-elevated);
+/* Glass header — no border-radius, for sticky headers */
+.glass-header {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0;
 }
 
 /* =========================================
    Command Center — report dashboard hero
    ========================================= */
 .command-center {
-  position: relative;
-  backdrop-filter: blur(28px) saturate(200%);
-  -webkit-backdrop-filter: blur(28px) saturate(200%);
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid var(--glass-elevated-border);
-  border-radius: 28px;
-  box-shadow:
-    var(--shadow-elevated),
-    var(--shadow-violet),
-    inset 0 1px 0 var(--glass-inner-glow);
-}
-.command-center::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    radial-gradient(ellipse 60% 40% at 30% 20%, rgba(124, 58, 237, 0.06), transparent),
-    radial-gradient(ellipse 40% 30% at 70% 80%, rgba(59, 130, 246, 0.04), transparent);
-  pointer-events: none;
-}
-.command-center::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 40%);
-  pointer-events: none;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* =========================================
    Redline Card — emerald-tinted glass
    ========================================= */
 .redline-card {
-  position: relative;
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   background: rgba(16, 185, 129, 0.06);
   border: 1px solid rgba(16, 185, 129, 0.18);
   border-left: 4px solid #10b981;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 16px;
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+  box-shadow: 0 1px 2px rgba(16, 185, 129, 0.08);
 }
 
 /* =========================================
@@ -224,7 +134,7 @@ body::before {
    ========================================= */
 .section-divider {
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(124, 58, 237, 0.3), rgba(255, 255, 255, 0.08), transparent);
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.08), transparent);
   margin: 0 auto;
   max-width: 80%;
 }
@@ -242,9 +152,11 @@ body::before {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 48px;
+  width: 40%;
+  min-width: 48px;
+  max-width: 120px;
   height: 2px;
-  background: linear-gradient(to right, #7c3aed, rgba(124, 58, 237, 0.3));
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.25), transparent);
   border-radius: 1px;
 }
 
@@ -260,28 +172,17 @@ body::before {
 }
 
 @keyframes float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(10px, -15px) scale(1.05); }
-  50% { transform: translate(-5px, 10px) scale(0.95); }
-  75% { transform: translate(8px, 5px) scale(1.02); }
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(10px, -15px); }
+  50% { transform: translate(-5px, 10px); }
+  75% { transform: translate(8px, 5px); }
 }
 
 /* =========================================
    Accent Glow Ring
    ========================================= */
 .accent-glow-ring {
-  box-shadow: 0 0 0 1px var(--accent), 0 0 30px var(--accent-glow), 0 0 60px rgba(124, 58, 237, 0.08);
-}
-
-/* =========================================
-   Paywall Card — violet-tinted glass with depth
-   ========================================= */
-.paywall-card {
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  background: var(--glass-violet-bg);
-  border: 1px solid var(--glass-violet-border);
-  box-shadow: var(--shadow-violet), inset 0 1px 0 rgba(124, 58, 237, 0.08);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
 .gradient-border {
@@ -355,25 +256,25 @@ body::before {
   background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.25);
   border-left: 4px solid #ef4444;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 16px;
-  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.10);
+  box-shadow: 0 1px 2px rgba(239, 68, 68, 0.10);
 }
 
 .finding-high {
   background: rgba(245, 158, 11, 0.08);
   border: 1px solid rgba(245, 158, 11, 0.20);
   border-left: 4px solid #f59e0b;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 16px;
-  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.06);
+  box-shadow: 0 1px 2px rgba(245, 158, 11, 0.06);
 }
 
 .finding-medium {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.10);
   border-left: 4px solid rgba(234, 179, 8, 0.40);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 16px;
 }
 
@@ -381,7 +282,7 @@ body::before {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-left: 2px solid rgba(34, 197, 94, 0.30);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 10px 16px;
 }
 

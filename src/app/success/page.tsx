@@ -108,7 +108,7 @@ function SuccessContent() {
 
       {creditsPurchased && (
         <div className="text-center py-20">
-          <div className="liquid-glass-elevated rounded-xl p-6 mb-8 inline-block" style={{ background: '#0f2922', border: '1px solid #166534' }}>
+          <div className="rounded-xl p-6 mb-8 inline-block bg-emerald-950/50 border border-emerald-800">
             <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
             <p className="text-lg font-semibold text-emerald-400">Payment successful!</p>
             <p className="text-sm text-emerald-300 mt-1">You have {creditBalance ?? 5} analysis credit{(creditBalance ?? 5) !== 1 ? 's' : ''}</p>
@@ -126,7 +126,7 @@ function SuccessContent() {
 
       {result && (
         <div>
-          <div className="liquid-glass-elevated rounded-xl p-6 mb-8 text-center" style={{ background: '#0f2922', border: '1px solid #166534' }}>
+          <div className="rounded-xl p-6 mb-8 text-center bg-emerald-950/50 border border-emerald-800">
             <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
             <p className="text-lg font-semibold text-emerald-400">Payment successful!</p>
             <p className="text-sm text-emerald-300 mt-1">
@@ -157,14 +157,13 @@ function SuccessContent() {
 export default function SuccessPage() {
   return (
     <div className="min-h-screen">
-      {/* Ambient floating blobs (subtle) */}
+      {/* Ambient floating blob */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="ambient-blob w-[300px] h-[300px] bg-violet-600/8 top-[10%] left-[20%]" />
-        <div className="ambient-blob w-[250px] h-[250px] bg-emerald-500/6 top-[40%] right-[10%]" style={{ animationDelay: '-8s' }} />
       </div>
 
       {/* Header */}
-      <header className="border-b border-white/15 sticky top-0 z-50 liquid-glass" style={{ borderRadius: 0 }}>
+      <header className="border-b border-white/15 sticky top-0 z-50 glass-header">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="font-mono font-bold text-xl tracking-wider text-white">
             CAVEAT

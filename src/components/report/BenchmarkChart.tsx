@@ -56,7 +56,7 @@ export default function BenchmarkChart({ benchmarks }: BenchmarkChartProps) {
                 if (!active || !payload?.[0]) return null;
                 const d = payload[0].payload;
                 return (
-                  <div className="liquid-glass-elevated rounded-lg p-3 text-xs">
+                  <div className="liquid-glass rounded-lg p-3 text-xs">
                     <p className="font-medium text-white mb-1">{d.name}</p>
                     <p className="text-zinc-400">Yours: <span className="text-zinc-200">{d.yours}</span></p>
                     <p className="text-zinc-400">Standard: <span className="text-zinc-200">{d.standard}</span></p>

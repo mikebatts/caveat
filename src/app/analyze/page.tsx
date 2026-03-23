@@ -144,15 +144,13 @@ export default function AnalyzePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Ambient floating blobs (subtler) */}
+      {/* Ambient floating blob */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="ambient-blob w-[350px] h-[350px] bg-violet-600/10 top-[-5%] left-[20%]" />
-        <div className="ambient-blob w-[300px] h-[300px] bg-blue-500/8 top-[30%] right-[-5%]" style={{ animationDelay: '-7s' }} />
-        <div className="ambient-blob w-[250px] h-[250px] bg-violet-500/8 bottom-[15%] left-[60%]" style={{ animationDelay: '-12s' }} />
       </div>
 
       {/* Header */}
-      <header className="border-b border-white/15 sticky top-0 z-50 liquid-glass" style={{ borderRadius: 0 }}>
+      <header className="border-b border-white/15 sticky top-0 z-50 glass-header">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="font-mono font-bold text-xl tracking-wider text-white">
             CAVEAT
@@ -227,7 +225,7 @@ export default function AnalyzePage() {
 
         {/* Error */}
         {error && (
-          <div className="mt-6 rounded-xl p-4 text-center" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+          <div className="mt-6 rounded-xl p-4 text-center bg-red-500/10 border border-red-500/20">
             <p className="text-red-400 flex items-center justify-center gap-2"><AlertTriangle className="w-4 h-4" /> {error}</p>
             <button
               onClick={handleReset}
@@ -258,7 +256,7 @@ export default function AnalyzePage() {
 
             {isRedirecting && (
               <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-                <div className="liquid-glass-elevated rounded-xl p-8 text-center max-w-sm mx-4">
+                <div className="liquid-glass rounded-xl p-8 text-center max-w-sm mx-4">
                   <div className="spinner spinner-lg mx-auto mb-4" />
                   <p className="font-semibold text-white">Redirecting to checkout...</p>
                   <p className="text-sm text-zinc-400 mt-1">You&apos;ll be taken to Stripe to complete payment</p>

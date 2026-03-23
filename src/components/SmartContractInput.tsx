@@ -115,10 +115,10 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
           onDragLeave={() => setIsDragging(false)}
           className={`
-            relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer
+            relative border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
             transition-all duration-300
             ${isDragging
-              ? 'border-violet-500 scale-[1.02] liquid-glass-elevated'
+              ? 'border-violet-500 scale-[1.02] liquid-glass'
               : 'border-zinc-700 hover:border-violet-500/50 liquid-glass'
             }
             ${isAnalyzing ? 'opacity-50 pointer-events-none' : ''}
@@ -139,9 +139,9 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
               {isAnalyzing ? (
                 <div className="spinner spinner-lg" />
               ) : isDragging ? (
-                <Download className="w-16 h-16 text-zinc-400" />
+                <Download className="w-10 h-10 text-zinc-400" />
               ) : (
-                <Code className="w-16 h-16 text-zinc-400" />
+                <Code className="w-10 h-10 text-zinc-400" />
               )}
             </div>
             <div>
@@ -163,7 +163,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
       {mode === 'paste' && (
         <div className="space-y-3">
           {isAnalyzing ? (
-            <div className="border-2 border-dashed border-violet-500/30 rounded-2xl p-12 text-center">
+            <div className="border-2 border-dashed border-violet-500/30 rounded-xl p-12 text-center">
               <div className="spinner spinner-lg mx-auto mb-4" />
               <p className="text-lg font-semibold text-zinc-100">Analyzing smart contract...</p>
               <p className="text-sm text-zinc-400 mt-1">This usually takes 30-60 seconds</p>
@@ -192,7 +192,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
       {mode === 'address' && (
         <div className="space-y-3">
           {isAnalyzing ? (
-            <div className="border-2 border-dashed border-violet-500/30 rounded-2xl p-12 text-center">
+            <div className="border-2 border-dashed border-violet-500/30 rounded-xl p-12 text-center">
               <div className="spinner spinner-lg mx-auto mb-4" />
               <p className="text-lg font-semibold text-zinc-100">Fetching & analyzing contract...</p>
               <p className="text-sm text-zinc-400 mt-1">This usually takes 30-60 seconds</p>
@@ -225,7 +225,7 @@ export default function SmartContractInput({ onAnalyze, isAnalyzing: externalAna
 
       {/* Error */}
       {error && (
-        <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+        <div className="rounded-xl p-4 text-center bg-red-500/10 border border-red-500/20">
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       )}

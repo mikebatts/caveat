@@ -44,10 +44,10 @@ export default function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProp
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       className={`
-        relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer
+        relative border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
         transition-all duration-300
         ${isDragging
-          ? 'border-violet-500 scale-[1.02] liquid-glass-elevated'
+          ? 'border-violet-500 scale-[1.02] liquid-glass'
           : 'border-zinc-700 hover:border-violet-500/50 liquid-glass'
         }
         ${isAnalyzing ? 'opacity-50 pointer-events-none' : ''}
@@ -66,9 +66,9 @@ export default function UploadZone({ onFileSelect, isAnalyzing }: UploadZoneProp
           {isAnalyzing ? (
             <div className="spinner spinner-lg" />
           ) : isDragging ? (
-            <Download className="w-16 h-16 text-violet-400" />
+            <Download className="w-10 h-10 text-violet-400" />
           ) : (
-            <FileUp className="w-16 h-16 text-zinc-400" />
+            <FileUp className="w-10 h-10 text-zinc-400" />
           )}
         </div>
 

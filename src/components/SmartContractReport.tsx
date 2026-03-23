@@ -91,7 +91,7 @@ export default function SmartContractReport({ result, onUnlock }: SmartContractR
           )}
 
           {/* Paywall */}
-          <div className="liquid-glass-violet accent-glow-ring rounded-2xl p-10 text-center">
+          <div className="liquid-glass-violet accent-glow-ring p-8 text-center">
             <p className="text-3xl font-bold text-white mb-2 font-serif">
               Unlock Full Security Report
             </p>
